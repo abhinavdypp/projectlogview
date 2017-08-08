@@ -1,26 +1,32 @@
-package main.java;
+package com.ibm.asset.logview.web.actions;
 
-import java.beans.Statement;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import com.ibm.asset.logview.core.db.DBConnection;
 
 
-import dbdetails.SingletonDB;
-
+/**
+ * <p>
+ * Created on Aug 01, 2017
+ * <p>
+ * Description:This action will be called when user work on Application login .
+ * 
+ * @author 
+ */
 public class UserLoginController extends HttpServlet {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)throws IOException, ServletException {
 		System.out.println("calling get");
 	}
@@ -32,13 +38,12 @@ public class UserLoginController extends HttpServlet {
 		String uname=request.getParameter("uname");
 		String pass=request.getParameter("pass");
 					
-		 Connection c = SingletonDB.getInstance().getConnection();
+		 Connection c = DBConnection.getInstance().getConnection();
 
 		
 		 String dbpwd = null;
 			String dbrole=null;
 			String availability=null;
-			String CheckValid=null;
 			if(null!= c)
 			{
 				try {
@@ -65,21 +70,12 @@ public class UserLoginController extends HttpServlet {
 						}
 						}
 						else{
-////							CheckValid="Blocked";
-////							HttpSession session=response.getSession();
-//							session.setAttribute("Validation",CheckValid);
 							response.sendRedirect("BlockedUser.jsp");
-				
-//							PrintWriter out=response.getWriter();
-//							out.println("blocked user");
 						}
 					
 					}
 					else
 					{
-//						CheckValid="Invalid";
-//						HttpSession session=request.getSession();
-//						session.setAttribute("Validation",CheckValid);
 						response.sendRedirect("Login_failed.jsp");
 						
 						

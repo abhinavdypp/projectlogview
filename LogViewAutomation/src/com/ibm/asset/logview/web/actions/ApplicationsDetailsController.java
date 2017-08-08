@@ -1,4 +1,4 @@
-package main.java;
+package com.ibm.asset.logview.web.actions;
 
 import java.io.IOException;
 import javax.servlet.RequestDispatcher;
@@ -7,13 +7,20 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import dbdetails.ManageDAO;
+
+import com.ibm.asset.logview.core.db.ManageDAO;
 
 /**
  * Servlet implementation class ApplicationsDetailsController
  */
 public class ApplicationsDetailsController extends HttpServlet {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		
 		System.out.println("calling doget" + request.getParameter("appName"));

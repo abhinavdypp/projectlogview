@@ -14,20 +14,20 @@
     <description></description>
     <display-name>UserLoginController</display-name>
     <servlet-name>UserLoginController</servlet-name>
-    <servlet-class>main.java.UserLoginController</servlet-class>
+    <servlet-class>com.ibm.asset.logview.web.actions.UserLoginController</servlet-class>
   </servlet>
   <servlet>
     <description></description>
     <display-name>ServerDetailsController</display-name>
     <servlet-name>ServerDetailsController</servlet-name>
-    <servlet-class>main.java.ServerDetailsController</servlet-class>
+    <servlet-class>com.ibm.asset.logview.web.actions.ServerDetailsController</servlet-class>
   </servlet>
   <servlet>
   	<description>
   	</description>
   	<display-name>ApplicationsDetailsController</display-name>
   	<servlet-name>ApplicationsDetailsController</servlet-name>
-  	<servlet-class>main.java.ApplicationsDetailsController</servlet-class>
+  	<servlet-class>com.ibm.asset.logview.web.actions.ApplicationsDetailsController</servlet-class>
   </servlet>
 <servlet-mapping>
     <servlet-name>ServerDetailsController</servlet-name>
@@ -45,7 +45,7 @@
     <description></description>
     <display-name>AdminController</display-name>
     <servlet-name>AdminController</servlet-name>
-    <servlet-class>main.java.AdminController</servlet-class>
+    <servlet-class>com.ibm.asset.logview.web.actions.AdminController</servlet-class>
   </servlet>
   <servlet-mapping>
     <servlet-name>AdminController</servlet-name>

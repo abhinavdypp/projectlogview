@@ -1,9 +1,13 @@
-package main.java.dto;
+package com.ibm.asset.logview.core.data;
 
-import java.util.List;
-
-
-
+/**
+ * <p>
+ * Created on Aug 01, 2017
+ * <p>
+ * Description:This action will be called when user need to fetch server data .
+ * 
+ * @author 
+ */
 public class ServerData {
 	
 	private int id;

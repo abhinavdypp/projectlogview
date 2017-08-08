@@ -1,4 +1,4 @@
-package dbdetails;
+package com.ibm.asset.logview.core.db;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -9,11 +9,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import main.java.dto.ServerData;
-import main.java.dto.User;
+import com.ibm.asset.logview.core.data.ServerData;
+import com.ibm.asset.logview.core.data.User;
+import com.ibm.asset.logview.core.db.DBConnection;
 
-import dbdetails.SingletonDB;
 
+/**
+ * <p>
+ * Created on Aug 01, 2017
+ * <p>
+ * Description:This action will be called when user has to fetch data query from DB.
+ * 
+ * @author 
+ */
 public class ManageDAO {
 	
 	// To retrieve user details from Login table which return Map object with user details	
@@ -25,7 +33,7 @@ public class ManageDAO {
 			 
 			try {
 				
-				 selectStmt = SingletonDB.getInstance().getConnection().createStatement();
+				 selectStmt = DBConnection.getInstance().getConnection().createStatement();
 				 rs = selectStmt.executeQuery("select * from Login");
 
 				 while(rs.next())
@@ -44,8 +52,6 @@ public class ManageDAO {
 								rs.close();
 							if (null != selectStmt)
 								selectStmt.close();
-//							if (null != SingletonDB.getInstance().getConnection())
-//								SingletonDB.getInstance().getConnection().close();
 
 						} catch (Exception ex) {
 							ex.printStackTrace();
@@ -61,7 +67,7 @@ public class ManageDAO {
 				Statement selectStmt = null;
 				String getUserDetailsQuery = "SELECT ID,username,password,Role,availability_Status FROM Login";
 				try {
-					 selectStmt = SingletonDB.getInstance().getConnection()
+					 selectStmt = DBConnection.getInstance().getConnection()
 							.createStatement();
 					 UserDetails = selectStmt
 							.executeQuery(getUserDetailsQuery);
@@ -109,7 +115,7 @@ public class ManageDAO {
 			maxPKValue++;
 			
 			  String sqlQuery = "INSERT INTO Login (ID,username,password,Role,availability_Status) VALUES (?, ?, ?, ?, ?)";
-				pst = SingletonDB.getInstance().getConnection().prepareStatement(sqlQuery);
+				pst = DBConnection.getInstance().getConnection().prepareStatement(sqlQuery);
 				
 				  pst.setInt(1, maxPKValue);  
 		          pst.setString(2,name);        
@@ -149,7 +155,7 @@ public class ManageDAO {
 		try{
 			
    
-			updateStmt = SingletonDB.getInstance().getConnection().prepareStatement("UPDATE Login SET  password=?, Role=?, availability_Status=? WHERE ID=?");
+			updateStmt = DBConnection.getInstance().getConnection().prepareStatement("UPDATE Login SET  password=?, Role=?, availability_Status=? WHERE ID=?");
        		
     		for (int k = 0; k < users.size(); k++) {
     			User data=users.get(k);
@@ -198,7 +204,7 @@ public class ManageDAO {
 			System.out.println(sql);			
 					
 		try{
-			int record=SingletonDB.getInstance().getConnection().createStatement().executeUpdate(sql);
+			int record=DBConnection.getInstance().getConnection().createStatement().executeUpdate(sql);
 			if(record>0){
 				deleteUser=true;
 			}
@@ -225,7 +231,7 @@ public class ManageDAO {
 			    String sqlQuery = "INSERT INTO Application_details " +
 						 //   "(Application id, Application Name) " +
 		                      "VALUES(?,?)";
-				insertStmt = SingletonDB.getInstance().getConnection().prepareStatement(sqlQuery);		
+				insertStmt = DBConnection.getInstance().getConnection().prepareStatement(sqlQuery);		
 				insertStmt.setInt(1, maxAppId);
 				insertStmt.setString(2, appName);				
 				int rowCount = insertStmt.executeUpdate();
@@ -262,7 +268,7 @@ public class ManageDAO {
 				  String sqlQuery = "INSERT INTO Sub_Application_details " +
 						 // 	"(sub_app_id, sub_application name, app_id, user_id) " +
 		                   "VALUES(?,?,?,?)";
-				insertStmt = SingletonDB.getInstance().getConnection().prepareStatement(sqlQuery);
+				insertStmt = DBConnection.getInstance().getConnection().prepareStatement(sqlQuery);
 				
 				insertStmt.setInt(1, maxSubAppId);
 				insertStmt.setString(2, subAppName);
@@ -298,7 +304,7 @@ public class ManageDAO {
 			  String sqlQuery = "INSERT INTO User_Appliction_details " +
 						 // 	"(UserId, ApplicationId) " +
 		                   "VALUES(?,?)";
-				insertStmt = SingletonDB.getInstance().getConnection().prepareStatement(sqlQuery);
+				insertStmt = DBConnection.getInstance().getConnection().prepareStatement(sqlQuery);
 				
 				insertStmt.setInt(1, Integer.parseInt(userId));
 				insertStmt.setInt(2, appId);
@@ -333,7 +339,7 @@ public class ManageDAO {
 		ResultSet dbAppnames = null;
 		HashMap<String, String> appNamesMap = new HashMap<String, String>();
 		try {
-			selectStmt = SingletonDB.getInstance().getConnection()
+			selectStmt = DBConnection.getInstance().getConnection()
 					.createStatement();
 			 dbAppnames = selectStmt
 					.executeQuery("select * from Application_details");
@@ -375,7 +381,7 @@ public class ManageDAO {
 		PreparedStatement prepStmt = null;
 		String sql = "select * from Sub_Application_details where app_id = ?";
 		try {
-			prepStmt = SingletonDB.getInstance().getConnection()
+			prepStmt = DBConnection.getInstance().getConnection()
 					.prepareStatement(sql);
 			prepStmt.setString(1, appId);
 			 dbSubAppnames = prepStmt.executeQuery();
@@ -423,7 +429,7 @@ public class ManageDAO {
 				+ "(Application_details.Application_id = Server_Details.[Application_Id])";
 
 		try {
-			 selectStmt = SingletonDB.getInstance().getConnection()
+			 selectStmt = DBConnection.getInstance().getConnection()
 					.createStatement();
 			 rsServerDetails = selectStmt
 					.executeQuery(getServerDetailsQuery);
@@ -474,7 +480,7 @@ public class ManageDAO {
 		try {
 			String sqlQuery = "INSERT INTO Server_Details "
 					+ "VALUES(?,?,?,?,?,?,?)";
-			insertStmt = SingletonDB.getInstance().getConnection()
+			insertStmt = DBConnection.getInstance().getConnection()
 					.prepareStatement(sqlQuery);
 			insertStmt.setInt(1, id);
 			insertStmt.setString(2, servername);
@@ -513,7 +519,7 @@ public class ManageDAO {
 				  "Application_Id = ?, Sub_app_id = ?, LogPath= ? where id = ?";
 		 
 		 try {
-			updateStmt = SingletonDB.getInstance().getConnection()
+			updateStmt = DBConnection.getInstance().getConnection()
 						.prepareStatement(updateQuery);
 			  for (int k = 0; k < servers.size(); k++) {
 				  ServerData data = servers.get(k);
@@ -555,7 +561,7 @@ public class ManageDAO {
 			}
 
 			try {
-				delStmt = SingletonDB.getInstance().getConnection()
+				delStmt = DBConnection.getInstance().getConnection()
 						.createStatement();
 				delStmt.executeUpdate(removesql);
 
@@ -578,8 +584,8 @@ public class ManageDAO {
 	 
 		try {
 
-			if (null != SingletonDB.getInstance().getConnection())
-				SingletonDB.getInstance().getConnection().close();		
+			if (null != DBConnection.getInstance().getConnection())
+				DBConnection.getInstance().getConnection().close();		
 				System.out.println("Connection closed");			 
 				} catch (SQLException ex) {
 					 ex.printStackTrace();
@@ -592,8 +598,8 @@ public class ManageDAO {
 	 
 		try {
 
-			if (null != SingletonDB.getInstance().getConnection())			
-			    SingletonDB.getInstance().getConnection().commit();
+			if (null != DBConnection.getInstance().getConnection())			
+			    DBConnection.getInstance().getConnection().commit();
 				System.out.println("Transactions commited.");
 			 
 				} catch (SQLException ex) {
@@ -601,8 +607,8 @@ public class ManageDAO {
 			    }finally {
 					try {
 						    System.out.println("Closing connection.");
-						if (null != SingletonDB.getInstance().getConnection())
-							SingletonDB.getInstance().getConnection().close();
+						if (null != DBConnection.getInstance().getConnection())
+							DBConnection.getInstance().getConnection().close();
 					} catch (Exception ex) {
 						ex.printStackTrace();
 					}
@@ -614,8 +620,8 @@ public class ManageDAO {
 	 
 		try {
 
-			if (null != SingletonDB.getInstance().getConnection())			
-			SingletonDB.getInstance().getConnection().rollback();
+			if (null != DBConnection.getInstance().getConnection())			
+			DBConnection.getInstance().getConnection().rollback();
 			System.out.println("Transactions rolled back!");
 			
 				} catch (SQLException ex) {
@@ -630,7 +636,7 @@ public class ManageDAO {
 		Statement stmt=null;
 		int result = 0;
 		try {
-		stmt = SingletonDB.getInstance().getConnection().createStatement();
+		stmt = DBConnection.getInstance().getConnection().createStatement();
 		String query = "select max(" + columnName + ") from " + tableName;
 		
 			rs = stmt.executeQuery(query);

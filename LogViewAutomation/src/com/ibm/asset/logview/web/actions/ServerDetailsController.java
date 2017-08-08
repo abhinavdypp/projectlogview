@@ -1,4 +1,4 @@
-package main.java;
+package com.ibm.asset.logview.web.actions;
 
 import java.io.IOException;
 
@@ -13,17 +13,31 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.ibm.asset.logview.core.data.ServerData;
+import com.ibm.asset.logview.core.db.ManageDAO;
 
 
-import main.java.dto.ServerData;
+
 
 import net.sf.json.JSONObject;
 
-
-import dbdetails.ManageDAO;
+/**
+ * <p>
+ * Created on Aug 01, 2017
+ * <p>
+ * Description:This action will be called when user work on server details.
+ * 
+ * @author 
+ */
 
 public class ServerDetailsController extends HttpServlet {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws IOException, ServletException {
 		System.out.println("calling doget" + request.getParameter("appName"));
