@@ -424,7 +424,7 @@ public class ManageDAO {
 				+ " FROM ApplicationDetails INNER JOIN "
 				+ "(SubApplicationDetails INNER JOIN ServerDetails ON SubApplicationDetails.SubAppID = ServerDetails.SubAppID) "
 				+ ""
-				+ "ON (ApplicationDetails.ApplicationID = Sub_ApplicationDetails.AppID) AND "
+				+ "ON (ApplicationDetails.ApplicationID = SubApplicationDetails.AppID) AND "
 				+ "(ApplicationDetails.ApplicationID = SubApplicationDetails.AppID) AND "
 				+ "(ApplicationDetails.ApplicationID = ServerDetails.[ApplicationID])";
 
