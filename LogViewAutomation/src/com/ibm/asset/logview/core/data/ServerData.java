@@ -4,7 +4,7 @@ package com.ibm.asset.logview.core.data;
  * <p>
  * Created on Aug 01, 2017
  * <p>
- * Description:This action will be called when user need to fetch server data .
+ * Description:This class will be called when user need to fetch server data .
  * 
  * @author 
  */

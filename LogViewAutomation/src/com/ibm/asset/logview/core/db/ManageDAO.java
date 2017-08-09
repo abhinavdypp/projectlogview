@@ -38,10 +38,10 @@ public class ManageDAO {
 
 				 while(rs.next())
 				 {
-					 int id = rs.getInt("ID");
-					 String userName=rs.getString("username");
+					 int id = rs.getInt("UserID");
+					 String userName=rs.getString("UserName");
 					 appNamesMap.put(String.valueOf(id), userName);
-					 System.out.println("ID  : "+id);				
+					 System.out.println("UserID  : "+id);				
 				 }
 			
 				} catch (SQLException ex) {
@@ -65,7 +65,7 @@ public class ManageDAO {
 				ArrayList<User> users = new ArrayList<User>();
 				ResultSet UserDetails = null;
 				Statement selectStmt = null;
-				String getUserDetailsQuery = "SELECT ID,username,password,Role,availability_Status FROM Login";
+				String getUserDetailsQuery = "SELECT UserID,UserName,Password,Role,AvailabilityStatus FROM Login";
 				try {
 					 selectStmt = DBConnection.getInstance().getConnection()
 							.createStatement();
@@ -74,11 +74,11 @@ public class ManageDAO {
 					while (UserDetails.next()) {
 						// System.out.println("getting query results");
 						User data = new User();
-						data.setId(UserDetails.getInt("id"));
-						data.setUsername(UserDetails.getString("username"));
+						data.setId(UserDetails.getInt("UserID"));
+						data.setUsername(UserDetails.getString("UserName"));
 						
 						data.setRole(UserDetails.getString("Role"));
-						data.setStatus(UserDetails.getString("availability_Status"));
+						data.setStatus(UserDetails.getString("AvailabilityStatus"));
 									
 						users.add(data);
 					}
@@ -111,10 +111,10 @@ public class ManageDAO {
 		 
 		try {
 			
-			int maxPKValue = getMaximumValue("Login", "ID");
+			int maxPKValue = getMaximumValue("Login", "UserID");
 			maxPKValue++;
 			
-			  String sqlQuery = "INSERT INTO Login (ID,username,password,Role,availability_Status) VALUES (?, ?, ?, ?, ?)";
+			  String sqlQuery = "INSERT INTO Login (UserID,UserName,Password,Role,AvailabilityStatus) VALUES (?, ?, ?, ?, ?)";
 				pst = DBConnection.getInstance().getConnection().prepareStatement(sqlQuery);
 				
 				  pst.setInt(1, maxPKValue);  
@@ -155,7 +155,7 @@ public class ManageDAO {
 		try{
 			
    
-			updateStmt = DBConnection.getInstance().getConnection().prepareStatement("UPDATE Login SET  password=?, Role=?, availability_Status=? WHERE ID=?");
+			updateStmt = DBConnection.getInstance().getConnection().prepareStatement("UPDATE Login SET  Password=?, Role=?, AvailabilityStatus=? WHERE UserID=?");
        		
     		for (int k = 0; k < users.size(); k++) {
     			User data=users.get(k);
@@ -194,12 +194,12 @@ public class ManageDAO {
 			for (int j = 0; j < ids.length; j++) {
 				recordids[j] = Integer.parseInt(ids[j]);
 			}
-			String sql = "DELETE from Login where id = "; 
+			String sql = "DELETE from Login where UserID = "; 
 			for (int k = 0; k < recordids.length; k++) {
 				if (k == 0)
 					sql = sql + recordids[k];
 				else
-					sql = sql + " or id = " + recordids[k];
+					sql = sql + " or UserID = " + recordids[k];
 			}
 			System.out.println(sql);			
 					
@@ -224,11 +224,11 @@ public class ManageDAO {
 		
 		try {
 			
-			 	int maxAppId= getMaximumValue("Application_details", "Application_id");
+			 	int maxAppId= getMaximumValue("ApplicationDetails", "ApplicationID");
 			 	maxAppId ++;
 			    System.out.println("maxAppId : " + maxAppId);
 
-			    String sqlQuery = "INSERT INTO Application_details " +
+			    String sqlQuery = "INSERT INTO ApplicationDetails " +
 						 //   "(Application id, Application Name) " +
 		                      "VALUES(?,?)";
 				insertStmt = DBConnection.getInstance().getConnection().prepareStatement(sqlQuery);		
@@ -261,11 +261,11 @@ public class ManageDAO {
 		 
 		try {
 			
-				int maxSubAppId= getMaximumValue("Sub_Application_details", "sub_app_ID");
+				int maxSubAppId= getMaximumValue("SubApplicationDetails", "SubAppID");
 				maxSubAppId ++;
 				System.out.println("maxSubAppId : " + maxSubAppId);
 				  
-				  String sqlQuery = "INSERT INTO Sub_Application_details " +
+				  String sqlQuery = "INSERT INTO SubApplicationDetails " +
 						 // 	"(sub_app_id, sub_application name, app_id, user_id) " +
 		                   "VALUES(?,?,?,?)";
 				insertStmt = DBConnection.getInstance().getConnection().prepareStatement(sqlQuery);
@@ -301,7 +301,7 @@ public class ManageDAO {
 		 
 		try {
 			
-			  String sqlQuery = "INSERT INTO User_Appliction_details " +
+			  String sqlQuery = "INSERT INTO UserApplicationDetails " +
 						 // 	"(UserId, ApplicationId) " +
 		                   "VALUES(?,?)";
 				insertStmt = DBConnection.getInstance().getConnection().prepareStatement(sqlQuery);
@@ -342,7 +342,7 @@ public class ManageDAO {
 			selectStmt = DBConnection.getInstance().getConnection()
 					.createStatement();
 			 dbAppnames = selectStmt
-					.executeQuery("select * from Application_details");
+					.executeQuery("select * from ApplicationDetails");
 			while (dbAppnames.next()) {
 				appNamesMap.put(dbAppnames.getString(1),
 						dbAppnames.getString(2));
@@ -379,7 +379,7 @@ public class ManageDAO {
 		Map<String, String> subAppNamesMap = null;
 		ResultSet dbSubAppnames = null;
 		PreparedStatement prepStmt = null;
-		String sql = "select * from Sub_Application_details where app_id = ?";
+		String sql = "select * from SubApplicationDetails where AppID = ?";
 		try {
 			prepStmt = DBConnection.getInstance().getConnection()
 					.prepareStatement(sql);
@@ -418,15 +418,15 @@ public class ManageDAO {
 		ArrayList<ServerData> servers = new ArrayList<ServerData>();
 		ResultSet rsServerDetails = null;
 		Statement selectStmt = null;
-		String getServerDetailsQuery = "SELECT Server_Details.[id],Server_Details.[Server_Name], Server_Details.[ip_address], Server_Details.Enviornment, "
-				+ "Server_Details.LogPath, Sub_Application_details.[sub_appliction Name],Application_details.[Application Name],  "
-				+ "Application_details.[application_id], Sub_Application_details.[sub_app_id]"
-				+ " FROM Application_details INNER JOIN "
-				+ "(Sub_Application_details INNER JOIN Server_Details ON Sub_Application_details.sub_app_ID = Server_Details.Sub_app_id) "
+		String getServerDetailsQuery = "SELECT ServerDetails.[ServerID],ServerDetails.[ServerName], ServerDetails.[IpAddress], ServerDetails.Enviornment, "
+				+ "ServerDetails.LogPath, SubApplicationDetails.[SubApplictionName],ApplicationDetails.[ApplicationName],  "
+				+ "ApplicationDetails.[ApplicationID], SubApplicationDetails.[SubAppID]"
+				+ " FROM ApplicationDetails INNER JOIN "
+				+ "(SubApplicationDetails INNER JOIN ServerDetails ON SubApplicationDetails.SubAppID = ServerDetails.SubAppID) "
 				+ ""
-				+ "ON (Application_details.Application_id = Sub_Application_details.app_id) AND "
-				+ "(Application_details.Application_id = Sub_Application_details.app_id) AND "
-				+ "(Application_details.Application_id = Server_Details.[Application_Id])";
+				+ "ON (ApplicationDetails.ApplicationID = Sub_ApplicationDetails.AppID) AND "
+				+ "(ApplicationDetails.ApplicationID = SubApplicationDetails.AppID) AND "
+				+ "(ApplicationDetails.ApplicationID = ServerDetails.[ApplicationID])";
 
 		try {
 			 selectStmt = DBConnection.getInstance().getConnection()
@@ -475,10 +475,10 @@ public class ManageDAO {
  {
 		Boolean tranStatus = false;
 		PreparedStatement insertStmt = null;
-		 int maxPKValue= getMaximumValue("Server_Details", "id");
+		 int maxPKValue= getMaximumValue("ServerDetails", "id");
 		 int id = maxPKValue + 1 ;
 		try {
-			String sqlQuery = "INSERT INTO Server_Details "
+			String sqlQuery = "INSERT INTO ServerDetails "
 					+ "VALUES(?,?,?,?,?,?,?)";
 			insertStmt = DBConnection.getInstance().getConnection()
 					.prepareStatement(sqlQuery);
@@ -515,8 +515,8 @@ public class ManageDAO {
 		Boolean tranStatus = false;
 		PreparedStatement updateStmt = null;
 		
-		 String updateQuery =  "Update Server_Details set Server_Name = ?, ip_address = ?, Enviornment = ?, " +
-				  "Application_Id = ?, Sub_app_id = ?, LogPath= ? where id = ?";
+		 String updateQuery =  "Update ServerDetails set ServerName = ?, IpAddress = ?, Enviornment = ?, " +
+				  "ApplicationID = ?, SubAppID = ?, LogPath= ? where ServerID = ?";
 		 
 		 try {
 			updateStmt = DBConnection.getInstance().getConnection()
@@ -552,12 +552,12 @@ public class ManageDAO {
  {
 		Statement delStmt = null;
 		if (recordids != null && recordids.length > 0) {
-			String removesql = "DELETE from Server_Details where id = ";
+			String removesql = "DELETE from ServerDetails where ServerID = ";
 			for (int k = 0; k < recordids.length; k++) {
 				if (k == 0)
 					removesql = removesql + recordids[k];
 				else
-					removesql = removesql + " or id = " + recordids[k];
+					removesql = removesql + " or ServerID = " + recordids[k];
 			}
 
 			try {

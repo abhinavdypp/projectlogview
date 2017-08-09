@@ -3,7 +3,7 @@ package com.ibm.asset.logview.core.data;
  * <p>
  * Created on Aug 01, 2017
  * <p>
- * Description:This action will be called when user details need to  persist.
+ * Description:This class will be called when user details need to  persist.
  * 
  * @author 
  */
