@@ -25,7 +25,33 @@ $('#appNameList').change(function(event) {
       });
         });
         });
+        
+        
+         var counter = 2;
+        
+          $("#addLogPath").click(function () {
+
+	if(counter>10){
+            alert("Only 10 textboxes allow");
+            return false;
+	}
+
+	var newTextBoxDiv = $(document.createElement('div'))
+	     .attr("id", 'TextBoxDiv' + counter);
+
+	newTextBoxDiv.after().html('<input type="text" name="logpath' + counter +
+	      '" id="logpath' + counter + '" value="" style="width: 100%; margin:3px; margin-left:0px;">');
+
+	newTextBoxDiv.appendTo("#TextBoxesGroup");
+
+   document.getElementById('countForLogpath').value = counter;
+	counter++;
+	 
+     });
+        
 });
+
+
  
  function validateForm() {
   var x = document.forms["serverform"]["appNameList"].value;
@@ -95,7 +121,7 @@ $('#appNameList').change(function(event) {
 
 		<div align="left" style="width: 729px; height: 247px; padding-top: 20px; padding-left: 390px;">
 			<form method="POST" action="ServerDetailsController"  onsubmit="return validateForm()" name="serverform">
-				<table width="50%" height="200px;"><tr>
+				<table width="50%" height="200px;" id="NewServerDetails"><tr>
 				<td> Application Name :
 				</td>
 				<td align="right">
@@ -159,7 +185,13 @@ $('#appNameList').change(function(event) {
 				Enter LogPath:
 				</td>
 				<td align="right">
-				 <input type="text" name="logpath" style="width: 100%">
+				<div id='TextBoxesGroup'>
+				 <div id="TextBoxDiv1">
+					<input type='textbox' id='logpath1' name="logpath1" style="width: 100%; margin:3px; margin-left:0px;" >
+				 </div>
+			   </div>
+<!-- 				 <input type="text" name="logpath" style="width: 100%"> -->
+				 <a href="#" id="addLogPath">Add another Logpath</a>
 				</td>
 				</tr>	
 				<tr><td></td></tr>
@@ -174,6 +206,7 @@ $('#appNameList').change(function(event) {
 				</td>
 				</tr>
 				</table>
+				<input type="hidden" id="countForLogpath"  name = "countForLogpath"  value="1"/>
 				<br> <br> 
 			</form>
 		</div>

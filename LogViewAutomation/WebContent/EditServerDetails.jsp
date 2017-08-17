@@ -22,11 +22,13 @@ table#tbServerDetails th {
     background-color: black;
     color: white;
 }
+
+
 </style>
 <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
  <script src="Scripts/jquery-1.12.4.min.js"></script>
  <script type="text/javascript">
- 
+  
  function changeVal(count)
 {
    var names = $("select#appNameList" + count).val();
@@ -65,8 +67,8 @@ function EnableDisableTextBox(chkId,count) {
          var selEnvList = document.getElementById("envList" + count);
         selEnvList.disabled = chkId.checked ? false : true;
         
-        var txtLogPath = document.getElementById("logpath" + count);
-        txtLogPath.disabled = chkId.checked ? false : true;
+      /*  var txtLogPath = document.getElementById("logpath" + count);
+        txtLogPath.disabled = chkId.checked ? false : true; */
         
          var selAppNameList = document.getElementById("appNameList" + count);
         selAppNameList.disabled = chkId.checked ? false : true;
@@ -138,12 +140,12 @@ function validateForm() {
         return false;
     }
     
-    var x = document.getElementById('logpath' + ids[i]).value;
+  /*  var x = document.getElementById('logpath' + ids[i]).value;
      if (x.trim().length == 0 || x=='' || x==null) {
         document.getElementById("errorMsg").innerHTML = "<b>Please enter lopath of application</b>";
        
         return false;
-    }
+    } */
     
       var x = document.getElementById('envList' + ids[i]).value;
      if (x == 'none') {
@@ -173,6 +175,17 @@ function validateForm() {
     function openPage(pageURL)
  {
  window.location.href = pageURL;
+ }
+ 
+  
+ function openLogpathPopup(serverId){
+alert(serverId);
+ document.getElementById('serverIdForLogpath').value= serverId;
+    // window.open("EditLogPath.jsp",null,
+    //"height=200,width=400,status=yes,toolbar=no,menubar=no,location=no");
+    window.open("EditLogPath.jsp",
+    "Logpath"
+   );
  }
 </script>
 
@@ -206,9 +219,10 @@ function validateForm() {
                    <th>Server Name</th>
                     <th>Ip address</th>
                     <th>Enviornment</th>
-                    <th>LogPath</th>
+<!--                     <th>LogPath</th> -->
                     <th>Application Name</th>
                     <th>Sub Application Name</th>
+                     <th></th>
                     
                 </tr>
             </thead>
@@ -260,8 +274,11 @@ function validateForm() {
 					
 				</select> 
                 </td>
-
- 				<td><input type="text" name="logpath${server.id}" id="logpath${server.id}" value="${server.logpath}" disabled></td>
+                 
+ 				<!--<td>
+ 				<c:forEach var="appName" items="${appnames}">
+ 				<input type="text" name="logpath${server.id}" id="logpath${server.id}" value="${server.logpath}" disabled>
+ 				</c:forEach></td> -->
 
 				<td>
 				 	<select name='appNameList${server.id}' id="appNameList${server.id}" onchange="changeVal(${server.id});" style="width:100%" disabled>
@@ -302,8 +319,12 @@ function validateForm() {
 						</c:forEach>
 				</select> 
                 </td>
-               
+               <td>
+               <a href="#" onclick="openLogpathPopup(${server.id})" name="lnkEditLogpath" id="lnkEditLogpath${server.id}" >Change Logpath</a>  
+                <input type="hidden" id="logpathList${server.id}"  name = "logpathList${server.id}"  value="${server.logpathlist}"/> 
+                </td>
                 </tr>
+               
                 </c:forEach>
             </tbody>
         </table>
@@ -318,8 +339,10 @@ function validateForm() {
 					value="Cancel" onclick="openPage('AdminHome.jsp')">
 					
 				   <input type="hidden" id="selectedids"  name = "selectedids"  value=""/>
+				    <input type="hidden" id="serverIdForLogpath"  name = "serverIdForLogpath"  value=""/>
+				   
         
         </form>
-      </center> 
+      </center>
 </body>
 </html>

@@ -4,24 +4,20 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.ibm.asset.logview.core.data.ApplicationBean;
 import com.ibm.asset.logview.core.data.ServerData;
+import com.ibm.asset.logview.core.data.SubApplicationBean;
 import com.ibm.asset.logview.core.data.User;
-import com.ibm.asset.logview.core.db.DBConnection;
 
 
-/**
- * <p>
- * Created on Aug 01, 2017
- * <p>
- * Description:This action will be called when user has to fetch data query from DB.
- * 
- * @author 
- */
+
 public class ManageDAO {
 	
 	// To retrieve user details from Login table which return Map object with user details	
@@ -33,15 +29,15 @@ public class ManageDAO {
 			 
 			try {
 				
-				 selectStmt = DBConnection.getInstance().getConnection().createStatement();
-				 rs = selectStmt.executeQuery("select * from Login");
+				 selectStmt = SingletonDB.getInstance().getConnection().createStatement();
+				 rs = selectStmt.executeQuery("select * from UserDetails");
 
 				 while(rs.next())
 				 {
-					 int id = rs.getInt("UserID");
-					 String userName=rs.getString("UserName");
+					 int id = rs.getInt("ID");
+					 String userName=rs.getString("username");
 					 appNamesMap.put(String.valueOf(id), userName);
-					 System.out.println("UserID  : "+id);				
+					 System.out.println("ID  : "+id);				
 				 }
 			
 				} catch (SQLException ex) {
@@ -52,6 +48,8 @@ public class ManageDAO {
 								rs.close();
 							if (null != selectStmt)
 								selectStmt.close();
+//							if (null != SingletonDB.getInstance().getConnection())
+//								SingletonDB.getInstance().getConnection().close();
 
 						} catch (Exception ex) {
 							ex.printStackTrace();
@@ -60,25 +58,67 @@ public class ManageDAO {
 			return appNamesMap;
 		}	
 		
+		
+		//***** Update Last Login of user in Login table****
+				public Boolean LastLogin(String uname)
+				{
+					Boolean lastLogin=false;
+					PreparedStatement pst = null;
+					Date today = new Date(); 
+					SimpleDateFormat Date_format= new SimpleDateFormat("yyyy/MM/dd-HH:mm:ss");
+								String timeStamp= Date_format.format(today);
+					 			
+					 
+					try {
+						
+						
+						  String sqlQuery = "UPDATE UserDetails SET LastLogin=? WHERE username=?";
+							pst = SingletonDB.getInstance().getConnection().prepareStatement(sqlQuery);
+							pst.setString(1, timeStamp);
+							pst.setString(2, uname);
+							  
+							int rowCount = pst.executeUpdate();
+							System.out.println(rowCount);
+							if(rowCount>0)
+								lastLogin = true;
+						 
+							} catch (SQLException ex) {
+								 ex.printStackTrace();
+						       } finally {
+								try {
+									if (null != pst)
+										pst.close();						
+								} catch (Exception ex) {
+									ex.printStackTrace();
+								}
+							}
+
+					
+					return lastLogin;
+				}
+
+
+		
+		
 		public ArrayList<User> selectUserDetails()
 		 {
 				ArrayList<User> users = new ArrayList<User>();
 				ResultSet UserDetails = null;
 				Statement selectStmt = null;
-				String getUserDetailsQuery = "SELECT UserID,UserName,Password,Role,AvailabilityStatus FROM Login";
+				String getUserDetailsQuery = "SELECT ID,username,password,Role,availability_Status FROM UserDetails";
 				try {
-					 selectStmt = DBConnection.getInstance().getConnection()
+					 selectStmt = SingletonDB.getInstance().getConnection()
 							.createStatement();
 					 UserDetails = selectStmt
 							.executeQuery(getUserDetailsQuery);
 					while (UserDetails.next()) {
 						// System.out.println("getting query results");
 						User data = new User();
-						data.setId(UserDetails.getInt("UserID"));
-						data.setUsername(UserDetails.getString("UserName"));
+						data.setId(UserDetails.getInt("id"));
+						data.setUsername(UserDetails.getString("username"));
 						
 						data.setRole(UserDetails.getString("Role"));
-						data.setStatus(UserDetails.getString("AvailabilityStatus"));
+						data.setStatus(UserDetails.getString("availability_Status"));
 									
 						users.add(data);
 					}
@@ -108,21 +148,25 @@ public class ManageDAO {
 	{
 		Boolean addUser=false;
 		PreparedStatement pst = null;
-		 
+		//*****Adding Timestamp******
+				Date today = new Date(); 
+				SimpleDateFormat Date_format= new SimpleDateFormat("yyyy/MM/dd");
+							String timeStamp= Date_format.format(today);
 		try {
 			
-			int maxPKValue = getMaximumValue("Login", "UserID");
+			int maxPKValue = getMaximumValue("UserDetails", "ID");
 			maxPKValue++;
 			
-			  String sqlQuery = "INSERT INTO Login (UserID,UserName,Password,Role,AvailabilityStatus) VALUES (?, ?, ?, ?, ?)";
-				pst = DBConnection.getInstance().getConnection().prepareStatement(sqlQuery);
+			  String sqlQuery = "INSERT INTO UserDetails (ID,username,password,Role,availability_Status,creation_date) VALUES (?, ?, ?, ?, ?, ?)";
+				pst = SingletonDB.getInstance().getConnection().prepareStatement(sqlQuery);
 				
 				  pst.setInt(1, maxPKValue);  
 		          pst.setString(2,name);        
 		          pst.setString(3,password);
 		          pst.setString(4,role);
 		          pst.setString(5,"Yes");
-				
+		          pst.setString(6, timeStamp);
+		          
 				int rowCount = pst.executeUpdate();
 		
 				if(rowCount>0)
@@ -155,15 +199,15 @@ public class ManageDAO {
 		try{
 			
    
-			updateStmt = DBConnection.getInstance().getConnection().prepareStatement("UPDATE Login SET  Password=?, Role=?, AvailabilityStatus=? WHERE UserID=?");
+			updateStmt = SingletonDB.getInstance().getConnection().prepareStatement("UPDATE UserDetails SET Role=?, availability_Status=? WHERE ID=?");
        		
     		for (int k = 0; k < users.size(); k++) {
     			User data=users.get(k);
 				  
-				  updateStmt.setString(1, data.getPassword());
-				  updateStmt.setString(2, data.getRole());
-				  updateStmt.setString(3,data.getStatus());
-				  updateStmt.setInt(4, data.getId());
+				//  updateStmt.setString(1, data.getPassword());
+				  updateStmt.setString(1, data.getRole());
+				  updateStmt.setString(2,data.getStatus());
+				  updateStmt.setInt(3, data.getId());
 				  updateStmt.addBatch();
 				}
 			 int[] row= updateStmt.executeBatch();
@@ -194,17 +238,17 @@ public class ManageDAO {
 			for (int j = 0; j < ids.length; j++) {
 				recordids[j] = Integer.parseInt(ids[j]);
 			}
-			String sql = "DELETE from Login where UserID = "; 
+			String sql = "DELETE from UserDetails where id = "; 
 			for (int k = 0; k < recordids.length; k++) {
 				if (k == 0)
 					sql = sql + recordids[k];
 				else
-					sql = sql + " or UserID = " + recordids[k];
+					sql = sql + " or id = " + recordids[k];
 			}
 			System.out.println(sql);			
 					
 		try{
-			int record=DBConnection.getInstance().getConnection().createStatement().executeUpdate(sql);
+			int record=SingletonDB.getInstance().getConnection().createStatement().executeUpdate(sql);
 			if(record>0){
 				deleteUser=true;
 			}
@@ -224,14 +268,14 @@ public class ManageDAO {
 		
 		try {
 			
-			 	int maxAppId= getMaximumValue("ApplicationDetails", "ApplicationID");
+			 	int maxAppId= getMaximumValue("Application_details", "Application_id");
 			 	maxAppId ++;
 			    System.out.println("maxAppId : " + maxAppId);
 
-			    String sqlQuery = "INSERT INTO ApplicationDetails " +
+			    String sqlQuery = "INSERT INTO Application_details " +
 						 //   "(Application id, Application Name) " +
 		                      "VALUES(?,?)";
-				insertStmt = DBConnection.getInstance().getConnection().prepareStatement(sqlQuery);		
+				insertStmt = SingletonDB.getInstance().getConnection().prepareStatement(sqlQuery);		
 				insertStmt.setInt(1, maxAppId);
 				insertStmt.setString(2, appName);				
 				int rowCount = insertStmt.executeUpdate();
@@ -261,14 +305,14 @@ public class ManageDAO {
 		 
 		try {
 			
-				int maxSubAppId= getMaximumValue("SubApplicationDetails", "SubAppID");
+				int maxSubAppId= getMaximumValue("Sub_Application_details", "sub_app_ID");
 				maxSubAppId ++;
 				System.out.println("maxSubAppId : " + maxSubAppId);
 				  
-				  String sqlQuery = "INSERT INTO SubApplicationDetails " +
+				  String sqlQuery = "INSERT INTO Sub_Application_details " +
 						 // 	"(sub_app_id, sub_application name, app_id, user_id) " +
 		                   "VALUES(?,?,?,?)";
-				insertStmt = DBConnection.getInstance().getConnection().prepareStatement(sqlQuery);
+				insertStmt = SingletonDB.getInstance().getConnection().prepareStatement(sqlQuery);
 				
 				insertStmt.setInt(1, maxSubAppId);
 				insertStmt.setString(2, subAppName);
@@ -301,10 +345,10 @@ public class ManageDAO {
 		 
 		try {
 			
-			  String sqlQuery = "INSERT INTO UserApplicationDetails " +
+			  String sqlQuery = "INSERT INTO User_Appliction_details " +
 						 // 	"(UserId, ApplicationId) " +
 		                   "VALUES(?,?)";
-				insertStmt = DBConnection.getInstance().getConnection().prepareStatement(sqlQuery);
+				insertStmt = SingletonDB.getInstance().getConnection().prepareStatement(sqlQuery);
 				
 				insertStmt.setInt(1, Integer.parseInt(userId));
 				insertStmt.setInt(2, appId);
@@ -339,10 +383,10 @@ public class ManageDAO {
 		ResultSet dbAppnames = null;
 		HashMap<String, String> appNamesMap = new HashMap<String, String>();
 		try {
-			selectStmt = DBConnection.getInstance().getConnection()
+			selectStmt = SingletonDB.getInstance().getConnection()
 					.createStatement();
 			 dbAppnames = selectStmt
-					.executeQuery("select * from ApplicationDetails");
+					.executeQuery("select * from Application_details");
 			while (dbAppnames.next()) {
 				appNamesMap.put(dbAppnames.getString(1),
 						dbAppnames.getString(2));
@@ -379,9 +423,9 @@ public class ManageDAO {
 		Map<String, String> subAppNamesMap = null;
 		ResultSet dbSubAppnames = null;
 		PreparedStatement prepStmt = null;
-		String sql = "select * from SubApplicationDetails where AppID = ?";
+		String sql = "select * from Sub_Application_details where app_id = ?";
 		try {
-			prepStmt = DBConnection.getInstance().getConnection()
+			prepStmt = SingletonDB.getInstance().getConnection()
 					.prepareStatement(sql);
 			prepStmt.setString(1, appId);
 			 dbSubAppnames = prepStmt.executeQuery();
@@ -410,6 +454,48 @@ public class ManageDAO {
 		return subAppNamesMap;
 
 	}
+	
+	
+	/**
+	 * This method will return loppath associated with the server
+	 * @param serverId
+	 * @return
+	 */
+	public List<String> getLogPathNames(int serverId) {
+		List<String> logPathMap = null;
+		ResultSet dbLogPathMap = null;
+		PreparedStatement prepStmt = null;
+		String sql = "select LogPath from LogPathDetails where ServerID = ?";
+		try {
+			prepStmt = SingletonDB.getInstance().getConnection()
+					.prepareStatement(sql);
+			prepStmt.setInt(1, serverId);
+			dbLogPathMap = prepStmt.executeQuery();
+			logPathMap = new ArrayList<String>();
+			while (dbLogPathMap.next()) {
+				logPathMap.add(dbLogPathMap.getString(1));
+			}
+
+		} catch (SQLException e) {
+			System.out.println("Error while getting logpath details");
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			try {
+				if (null != dbLogPathMap)
+					dbLogPathMap.close();
+				if (null != prepStmt)
+					prepStmt.close();
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		}	
+
+
+		return logPathMap;
+
+	}
+	
 	/*
 	 * This function will return all server details.
 	 */
@@ -418,43 +504,53 @@ public class ManageDAO {
 		ArrayList<ServerData> servers = new ArrayList<ServerData>();
 		ResultSet rsServerDetails = null;
 		Statement selectStmt = null;
-		String getServerDetailsQuery = "SELECT ServerDetails.[ServerID],ServerDetails.[ServerName], ServerDetails.[IpAddress], ServerDetails.Enviornment, "
-				+ "ServerDetails.LogPath, SubApplicationDetails.[SubApplictionName],ApplicationDetails.[ApplicationName],  "
-				+ "ApplicationDetails.[ApplicationID], SubApplicationDetails.[SubAppID]"
-				+ " FROM ApplicationDetails INNER JOIN "
-				+ "(SubApplicationDetails INNER JOIN ServerDetails ON SubApplicationDetails.SubAppID = ServerDetails.SubAppID) "
-				+ ""
-				+ "ON (ApplicationDetails.ApplicationID = SubApplicationDetails.AppID) AND "
-				+ "(ApplicationDetails.ApplicationID = SubApplicationDetails.AppID) AND "
-				+ "(ApplicationDetails.ApplicationID = ServerDetails.[ApplicationID])";
+		String getServerDetailsQuery = "SELECT Server_Details.[id],Server_Details.[Server_Name], Server_Details.[ip_address], Server_Details.Enviornment, "
+				+ "Sub_Application_details.[sub_appliction Name],Application_details.[Application_Name], "
+				+ "Application_details.[application_id], Sub_Application_details.[sub_app_id]"
+				+ " FROM Application_details INNER JOIN "
+				+ "(Sub_Application_details INNER JOIN Server_Details ON Sub_Application_details.sub_app_ID = Server_Details.Sub_app_id) "
+				+ "ON (Application_details.Application_id = Sub_Application_details.app_id) AND "
+				+ "(Application_details.Application_id = Sub_Application_details.app_id) AND "
+				+ "(Application_details.Application_id = Server_Details.[Application_Id])";
 
 		try {
-			 selectStmt = DBConnection.getInstance().getConnection()
+			 selectStmt = SingletonDB.getInstance().getConnection()
 					.createStatement();
 			 rsServerDetails = selectStmt
 					.executeQuery(getServerDetailsQuery);
 			while (rsServerDetails.next()) {
 				// System.out.println("getting query results");
 				ServerData data = new ServerData();
-				data.setId(rsServerDetails.getInt(1));
+				int serverId = rsServerDetails.getInt(1);
+				data.setId(serverId);
 				data.setServername(rsServerDetails.getString(2));
 				data.setIpaddress(rsServerDetails.getString(3));
-				data.setEnviornment(rsServerDetails.getString(4));
-				data.setLogpath(rsServerDetails.getString(5));
-				data.setSub_app_name(rsServerDetails.getString(6));
-				data.setApplication_name(rsServerDetails.getString(7));
-				int app_id = rsServerDetails.getInt(8);
+				data.setEnviornment(rsServerDetails.getString(4));				
+				data.setSub_app_name(rsServerDetails.getString(5));
+				data.setApplication_name(rsServerDetails.getString(6)); 
+				int app_id = rsServerDetails.getInt(7);
 				data.setApplication_id(app_id);
-				data.setSub_app_id(rsServerDetails.getInt(9));
-				data.setSub_app_id(3);
+				data.setSub_app_id(rsServerDetails.getInt(8));
 
 				Map<String, String> SubAppNamesMap = new HashMap<String, String>();
 				SubAppNamesMap = getSubAppNames(Integer.toString(app_id));
 				data.setSubapplist(SubAppNamesMap);
+				System.out.println("getting logpath details for serverid " + serverId);
+				List<String> LogPathNamesList =  new ArrayList<String>();
+				LogPathNamesList = getLogPathNames(serverId);
+				data.setLogpathlist(LogPathNamesList);
+				
+				/*List<String> loapathlist = new ArrayList<String>();
+				loapathlist.add("logpath1");
+				loapathlist.add("logpath2");
+				loapathlist.add("logpath3");
+				
+				data.setLogpathlist(loapathlist);*/
+				
 				servers.add(data);
 			}
 		} catch (Exception e) {
-			System.out.println("Error while getting all server details");
+			System.out.println("Error while getting all server details" + e.getMessage());
 			e.printStackTrace();
 		}finally {
 			try {
@@ -471,16 +567,16 @@ public class ManageDAO {
 		return servers;
 	}
 	
-	public boolean addNewServerDetails( String servername , String ipaddress , String environment, int app_id, int sub_app_id, String logPath)
+	public int addNewServerDetails( String servername , String ipaddress , String environment, int app_id, int sub_app_id)
  {
-		Boolean tranStatus = false;
+		int recordID = 0;
 		PreparedStatement insertStmt = null;
-		 int maxPKValue= getMaximumValue("ServerDetails", "id");
+		 int maxPKValue= getMaximumValue("Server_Details", "id");
 		 int id = maxPKValue + 1 ;
 		try {
-			String sqlQuery = "INSERT INTO ServerDetails "
-					+ "VALUES(?,?,?,?,?,?,?)";
-			insertStmt = DBConnection.getInstance().getConnection()
+			String sqlQuery = "INSERT INTO Server_Details "
+					+ "VALUES(?,?,?,?,?,?)";
+			insertStmt = SingletonDB.getInstance().getConnection()
 					.prepareStatement(sqlQuery);
 			insertStmt.setInt(1, id);
 			insertStmt.setString(2, servername);
@@ -488,13 +584,13 @@ public class ManageDAO {
 			insertStmt.setString(4, environment);
 			insertStmt.setInt(5, app_id);
 			insertStmt.setInt(6, sub_app_id);
-			insertStmt.setString(7, logPath);
+			
 			System.out.println(id);
-			System.out.println(servername+ " " +ipaddress + " "+environment + " "+logPath);
+			System.out.println(servername+ " " +ipaddress + " "+environment);
 			System.out.println(app_id + " " +sub_app_id);
 			int rowCount = insertStmt.executeUpdate();
 			if (rowCount > 0)
-				tranStatus = true;
+				recordID= id;
 		} catch (SQLException ex) {
 			ex.printStackTrace();
 		} finally {
@@ -506,20 +602,86 @@ public class ManageDAO {
 			}
 		}
 
-		return tranStatus;
+		return recordID;
 
 	}
+	
+	public int deleteLogPathDetails(int serverId)
+ {
+		Statement delStmt = null;
+		int recordcount = 0;
+		if (serverId != 0) {
+			String removesql = "DELETE from LogPathDetails where ServerID = " + serverId;
+			
+			try {
+				delStmt = SingletonDB.getInstance().getConnection()
+						.createStatement();
+				  recordcount = delStmt.executeUpdate(removesql);
+				 System.out.println(" recordcount " + recordcount);
+			} catch (SQLException e) {
+				System.out.println("Error while deleting logpath details");
+				e.printStackTrace();
+			} finally {
+				try {
+					if (null != delStmt)
+						delStmt.close();
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+		}
+		return recordcount;
+	}
+	
+	public boolean addNewLogPathDetails(int serverID, List<String> logPaths)
+	 {
+			Boolean tranStatus = false;
+			PreparedStatement insertStmt = null;
+			 int maxPKValue= getMaximumValue("LogPathDetails", "LogPathID");
+			 int id = maxPKValue ;
+			try {
+				String sqlQuery = "INSERT INTO LogPathDetails "
+						+ "VALUES(?,?,?)";
+				insertStmt = SingletonDB.getInstance().getConnection()
+						.prepareStatement(sqlQuery);
+			for (int k = 0; k < logPaths.size(); k++) {
+				id++;
+				insertStmt.setInt(1, id);
+				insertStmt.setInt(2, serverID);
+				System.out.println(" logPaths.get(k) " + logPaths.get(k));
+				insertStmt.setString(3, logPaths.get(k));
+				insertStmt.addBatch();
+			}
+			int[] rowCount = insertStmt.executeBatch();
+			//	int rowCount = insertStmt.executeUpdate();
+			//	if (rowCount > 0)
+					tranStatus = true;
+			} catch (SQLException ex) {
+				ex.printStackTrace();
+			} finally {
+				try {
+					if (null != insertStmt)
+						insertStmt.close();
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+
+			return tranStatus;
+
+		}
+	
 	
 	public void updateServerDetails(List<ServerData> servers)
 	{
 		Boolean tranStatus = false;
 		PreparedStatement updateStmt = null;
 		
-		 String updateQuery =  "Update ServerDetails set ServerName = ?, IpAddress = ?, Enviornment = ?, " +
-				  "ApplicationID = ?, SubAppID = ?, LogPath= ? where ServerID = ?";
+		 String updateQuery =  "Update Server_Details set Server_Name = ?, ip_address = ?, Enviornment = ?, " +
+				  "Application_Id = ?, Sub_app_id = ? where id = ?";
 		 
 		 try {
-			updateStmt = DBConnection.getInstance().getConnection()
+			updateStmt = SingletonDB.getInstance().getConnection()
 						.prepareStatement(updateQuery);
 			  for (int k = 0; k < servers.size(); k++) {
 				  ServerData data = servers.get(k);
@@ -528,8 +690,7 @@ public class ManageDAO {
 				  updateStmt.setString(3, data.getEnviornment());
 				  updateStmt.setInt(4, data.getApplication_id());
 				  updateStmt.setInt(5, data.getSub_app_id());
-				  updateStmt.setString(6, data.getLogpath());
-				  updateStmt.setInt(7, data.getId());
+				  updateStmt.setInt(6, data.getId());
 				  updateStmt.addBatch();
 				}
 			     updateStmt.executeBatch();
@@ -552,16 +713,16 @@ public class ManageDAO {
  {
 		Statement delStmt = null;
 		if (recordids != null && recordids.length > 0) {
-			String removesql = "DELETE from ServerDetails where ServerID = ";
+			String removesql = "DELETE from Server_Details where id = ";
 			for (int k = 0; k < recordids.length; k++) {
 				if (k == 0)
 					removesql = removesql + recordids[k];
 				else
-					removesql = removesql + " or ServerID = " + recordids[k];
+					removesql = removesql + " or id = " + recordids[k];
 			}
 
 			try {
-				delStmt = DBConnection.getInstance().getConnection()
+				delStmt = SingletonDB.getInstance().getConnection()
 						.createStatement();
 				delStmt.executeUpdate(removesql);
 
@@ -584,8 +745,8 @@ public class ManageDAO {
 	 
 		try {
 
-			if (null != DBConnection.getInstance().getConnection())
-				DBConnection.getInstance().getConnection().close();		
+			if (null != SingletonDB.getInstance().getConnection())
+				SingletonDB.getInstance().getConnection().close();		
 				System.out.println("Connection closed");			 
 				} catch (SQLException ex) {
 					 ex.printStackTrace();
@@ -598,8 +759,8 @@ public class ManageDAO {
 	 
 		try {
 
-			if (null != DBConnection.getInstance().getConnection())			
-			    DBConnection.getInstance().getConnection().commit();
+			if (null != SingletonDB.getInstance().getConnection())			
+			    SingletonDB.getInstance().getConnection().commit();
 				System.out.println("Transactions commited.");
 			 
 				} catch (SQLException ex) {
@@ -607,8 +768,8 @@ public class ManageDAO {
 			    }finally {
 					try {
 						    System.out.println("Closing connection.");
-						if (null != DBConnection.getInstance().getConnection())
-							DBConnection.getInstance().getConnection().close();
+						if (null != SingletonDB.getInstance().getConnection())
+							SingletonDB.getInstance().getConnection().close();
 					} catch (Exception ex) {
 						ex.printStackTrace();
 					}
@@ -620,8 +781,8 @@ public class ManageDAO {
 	 
 		try {
 
-			if (null != DBConnection.getInstance().getConnection())			
-			DBConnection.getInstance().getConnection().rollback();
+			if (null != SingletonDB.getInstance().getConnection())			
+			SingletonDB.getInstance().getConnection().rollback();
 			System.out.println("Transactions rolled back!");
 			
 				} catch (SQLException ex) {
@@ -636,7 +797,7 @@ public class ManageDAO {
 		Statement stmt=null;
 		int result = 0;
 		try {
-		stmt = DBConnection.getInstance().getConnection().createStatement();
+		stmt = SingletonDB.getInstance().getConnection().createStatement();
 		String query = "select max(" + columnName + ") from " + tableName;
 		
 			rs = stmt.executeQuery(query);
@@ -662,6 +823,183 @@ public class ManageDAO {
 		return result;
 	}
 
+	public ArrayList<ApplicationBean> getApplicationDetails()
+	 {
+			ArrayList<ApplicationBean> apps = new ArrayList<ApplicationBean>();
+			ResultSet appDetails = null;
+			Statement selectStmt = null;
+			String getUserDetailsQuery = "SELECT * FROM Application_details";
+			try {
+				 selectStmt = SingletonDB.getInstance().getConnection()
+						.createStatement();
+				 appDetails = selectStmt.executeQuery(getUserDetailsQuery);
+				while (appDetails.next()) {
+					// System.out.println("getting query results");
+					ApplicationBean appBean = new ApplicationBean();
+					int appid = appDetails.getInt("Application_id");
+					String appName = appDetails.getString("Application_Name");
+					System.out.println("appid : "+appid +" appName: "+appName);
+					appBean.setApplicationid(appid);
+					appBean.setApplicationname(appName);													
+					apps.add(appBean);
+				}
+			} catch (Exception e) {
+				System.out.println("Error while getting all user details");
+				e.printStackTrace();
+			}finally {
+				try {
+					if (null != appDetails)
+						appDetails.close();
+					if (null != selectStmt)
+						selectStmt.close();
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+			}	
+			
+			return apps;
+		}
+
+	public void deleteApplicationDetails(int[] recordids)
+ {
+		Statement delStmt = null;
+		if (recordids != null && recordids.length > 0) {
+			String app_removesql = "DELETE from Application_details where Application_id = ";
+			String subApp_removesql = "DELETE from Sub_Application_details where app_id = ";
+			String userApp_removesql = "DELETE from User_Appliction_details where ApplictionId = ";
+			for (int k = 0; k < recordids.length; k++) {
+				if (k == 0){
+					app_removesql = app_removesql + recordids[k];
+						subApp_removesql = subApp_removesql + recordids[k];
+							userApp_removesql = userApp_removesql + recordids[k];
+				}else{
+					app_removesql = app_removesql + " or Application_id = " + recordids[k];
+						subApp_removesql = subApp_removesql + " or app_id = " + recordids[k];
+							userApp_removesql = userApp_removesql + " or ApplictionId = " + recordids[k];
+				}  
+			}
+
+			      System.out.println("app_removesql : "+app_removesql);
+			      	System.out.println("subApp_removesql : "+subApp_removesql);
+			      		System.out.println("userApp_removesql : "+userApp_removesql);
+			try {
+				delStmt = SingletonDB.getInstance().getConnection()
+						.createStatement();
+				delStmt.executeUpdate(userApp_removesql);
+				delStmt.executeUpdate(subApp_removesql);
+				delStmt.executeUpdate(app_removesql);
+				/*int result = delStmt.executeUpdate(userApp_removesql);
+				if(result > 0)
+				{
+					result = delStmt.executeUpdate(subApp_removesql);
+					if (result > 0) {
+						delStmt.executeUpdate(app_removesql);
+						commitTransaction();
+					}else {
+					rollBackTransaction();}
+					
+				}*/
+				
+				
+				
+				 
+			/*	System.out.println("count " + count);
+				if(delStmt.executeUpdate(userApp_removesql) > 0)
+				{ System.out.println("deleted user app details");
+					if (delStmt.executeUpdate(subApp_removesql) > 0)
+						{System.out.println("subapp deleted");
+						delStmt.executeUpdate(app_removesql);}
+				} */
+		
+					
+						
+
+			} catch (SQLException e) {
+				System.out.println("Error while deleting application details");
+				e.printStackTrace();
+			} finally {
+				try {
+					if (null != delStmt)
+						delStmt.close();
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+		}
+	}
+
+
+	public ArrayList<SubApplicationBean> getSubApplicationDetails()
+	 {
+			ArrayList<SubApplicationBean> sapps = new ArrayList<SubApplicationBean>();
+			ResultSet appDetails = null;
+			Statement selectStmt = null;
+			String getUserDetailsQuery = "SELECT * FROM Sub_Application_details";
+			try {
+				 selectStmt = SingletonDB.getInstance().getConnection()
+						.createStatement();
+				 appDetails = selectStmt.executeQuery(getUserDetailsQuery);
+				while (appDetails.next()) {
+					// System.out.println("getting query results");
+					SubApplicationBean sappBean = new SubApplicationBean();
+					int sappid = appDetails.getInt("sub_app_ID");
+					String sappName = appDetails.getString("sub_appliction Name");
+					System.out.println("sub_app_ID : "+sappid +" sub_appliction: "+sappName);
+					sappBean.setSubapplicationid(sappid);
+					sappBean.setSubapplicationname(sappName);													
+					sapps.add(sappBean);
+				}
+			} catch (Exception e) {
+				System.out.println("Error while getting all user details");
+				e.printStackTrace();
+			}finally {
+				try {
+					if (null != appDetails)
+						appDetails.close();
+					if (null != selectStmt)
+						selectStmt.close();
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+			}	
+			
+			return sapps;
+		}
+
+	public void deleteSubApplicationDetails(int[] recordids)
+{
+		Statement delStmt = null;
+		if (recordids != null && recordids.length > 0) {
+			String subApp_removesql = "DELETE from Sub_Application_details where sub_app_ID = ";
+			
+			for (int k = 0; k < recordids.length; k++) {
+				if (k == 0){
+						subApp_removesql = subApp_removesql + recordids[k];
+				}else{
+						subApp_removesql = subApp_removesql + " or sub_app_ID = " + recordids[k];
+				}  
+			}
+
+						System.out.println("subApp_removesql : "+subApp_removesql);
+			try {
+				delStmt = SingletonDB.getInstance().getConnection()
+						.createStatement();
+					delStmt.executeUpdate(subApp_removesql);
+			} catch (SQLException e) {
+				System.out.println("Error while deleting application details");
+				e.printStackTrace();
+			} finally {
+				try {
+					if (null != delStmt)
+						delStmt.close();
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+		}
+	}
+	
+	
 	
 
 }

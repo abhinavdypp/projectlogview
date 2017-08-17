@@ -7,19 +7,37 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>Login</title>
+<style type="text/css">
+table, td,th
+{
+boarder: 1px solid blue;
+font-family:sans-serif;
+}
+div{
+font-family:sans-serif;
+}
+</style>
+
+
+<title>User Page</title>
+
+
 </head>
-<body background="http://piranahimpressions.com/img/seq-slider/bg-clouds.jpg" link="black" alink="black" vlink="black">
-<div style="top:0">
-<table border=0>
+<body  background="http://piranahimpressions.com/img/seq-slider/bg-clouds.jpg" link="black" alink="black" vlink="black">
+<center>
+
+
+<div>
+<table border=0 style="position:absolute; top:0px;">
 <tbody>
 	<tr>
-		<td width="150" height="80"><img src="http://www.bitpad.com/.a/6a00d834202e5653ef0133f0e26640970b-pi" width="120" height="80"></td>
-		<td align="center" width="10500" height="80" style="font-size:36px; color:#d50e21";><b>LogView Application</b></td>
-		<td width="150" height="80"><img src="https://fontmeme.com/images/IBM-Logo.jpg" width="120" height="100"></td></b>
+		<td width="150" height="100"><img src="https://fontmeme.com/images/IBM-Logo.jpg" width="120" height="100"></td></b>
+		<td align="center" width="10500" height="80" style="font-size:36px; color:#0c69c2; text-shadow: 2px 2px 4px #8ec9db;"><b>LogView Application</b></td>
+		
 	</tr>	
-</tbody></table>
-
-</div>
+	
+</tbody></table></div><br><br><br><br><br><br><br>
+</center>
 <center>
 <h2>!!!Login Here!!!</h2>
 <form method="POST" action="UserLoginController">

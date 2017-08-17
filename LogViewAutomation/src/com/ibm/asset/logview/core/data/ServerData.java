@@ -1,13 +1,9 @@
 package com.ibm.asset.logview.core.data;
 
-/**
- * <p>
- * Created on Aug 01, 2017
- * <p>
- * Description:This class will be called when user need to fetch server data .
- * 
- * @author 
- */
+import java.util.List;
+
+
+
 public class ServerData {
 	
 	private int id;
@@ -21,6 +17,7 @@ public class ServerData {
 	private int sub_app_id;
 	
 	private java.util.Map<String,String> subapplist;
+	private List<String> logpathlist;
 	
 	public int getId() {
 		return id;
@@ -81,6 +78,12 @@ public class ServerData {
 	}
 	public void setSubapplist(java.util.Map<String, String> subapplist) {
 		this.subapplist = subapplist;
+	}
+	public List<String> getLogpathlist() {
+		return logpathlist;
+	}
+	public void setLogpathlist(List<String> logpathlist) {
+		this.logpathlist = logpathlist;
 	}
 	
 	

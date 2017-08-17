@@ -23,6 +23,16 @@
     <servlet-class>com.ibm.asset.logview.web.actions.ServerDetailsController</servlet-class>
   </servlet>
   <servlet>
+    <description></description>
+    <display-name>UserController</display-name>
+    <servlet-name>UserController</servlet-name>
+    <servlet-class>com.ibm.asset.logview.web.actions.UserController</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>UserController</servlet-name>
+    <url-pattern>/UserController</url-pattern>
+  </servlet-mapping> 
+  <servlet>
   	<description>
   	</description>
   	<display-name>ApplicationsDetailsController</display-name>
@@ -47,8 +57,19 @@
     <servlet-name>AdminController</servlet-name>
     <servlet-class>com.ibm.asset.logview.web.actions.AdminController</servlet-class>
   </servlet>
+  <servlet>
+  	<description>
+  	</description>
+  	<display-name>ManageLogViewer</display-name>
+  	<servlet-name>ManageLogViewer</servlet-name>
+  	<servlet-class>com.ibm.asset.logview.web.actions.ManageLogViewer</servlet-class>
+  </servlet>
   <servlet-mapping>
     <servlet-name>AdminController</servlet-name>
     <url-pattern>/AdminController</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+  	<servlet-name>ManageLogViewer</servlet-name>
+  	<url-pattern>/ManageLogViewer</url-pattern>
   </servlet-mapping>
 </web-app>

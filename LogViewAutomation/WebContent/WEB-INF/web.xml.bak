@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app id="WebApp_ID" version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+	<display-name>LogViewAutomation</display-name>
+	<welcome-file-list>
+   	<welcome-file>UserLoginView.jsp</welcome-file> 
+		 <welcome-file>index.html</welcome-file>
+		<welcome-file>index.htm</welcome-file>
+		<welcome-file>index.jsp</welcome-file>
+		<welcome-file>default.html</welcome-file>
+		<welcome-file>default.htm</welcome-file>
+		<welcome-file>default.jsp</welcome-file> 
+	</welcome-file-list>
+	<servlet>
+    <description></description>
+    <display-name>UserLoginController</display-name>
+    <servlet-name>UserLoginController</servlet-name>
+    <servlet-class>main.java.UserLoginController</servlet-class>
+  </servlet>
+  <servlet>
+    <description></description>
+    <display-name>ServerDetailsController</display-name>
+    <servlet-name>ServerDetailsController</servlet-name>
+    <servlet-class>main.java.ServerDetailsController</servlet-class>
+  </servlet>
+  <servlet>
+  	<description>
+  	</description>
+  	<display-name>ApplicationsDetailsController</display-name>
+  	<servlet-name>ApplicationsDetailsController</servlet-name>
+  	<servlet-class>main.java.ApplicationsDetailsController</servlet-class>
+  </servlet>
+<servlet-mapping>
+    <servlet-name>ServerDetailsController</servlet-name>
+    <url-pattern>/ServerDetailsController</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>UserLoginController</servlet-name>
+    <url-pattern>/UserLoginController</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+  	<servlet-name>ApplicationsDetailsController</servlet-name>
+  	<url-pattern>/ApplicationsDetailsController</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>AdminController</display-name>
+    <servlet-name>AdminController</servlet-name>
+    <servlet-class>main.java.AdminController</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>AdminController</servlet-name>
+    <url-pattern>/AdminController</url-pattern>
+  </servlet-mapping>
+</web-app>

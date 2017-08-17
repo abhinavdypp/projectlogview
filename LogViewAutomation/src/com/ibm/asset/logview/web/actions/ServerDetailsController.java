@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.RequestDispatcher;
@@ -19,25 +20,14 @@ import com.ibm.asset.logview.core.db.ManageDAO;
 
 
 
+
 import net.sf.json.JSONObject;
 
-/**
- * <p>
- * Created on Aug 01, 2017
- * <p>
- * Description:This action will be called when user work on server details.
- * 
- * @author 
- */
+
+
 
 public class ServerDetailsController extends HttpServlet {
 	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-
-
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws IOException, ServletException {
 		System.out.println("calling doget" + request.getParameter("appName"));
@@ -69,7 +59,7 @@ public class ServerDetailsController extends HttpServlet {
 		}
 		else if(action.equalsIgnoreCase("updateServerDetails")) 
  {
-
+			System.out.println("In updateServerDetails ");
 			HttpSession session = request.getSession(true);
 			ManageDAO dao = new ManageDAO();
 			ArrayList<ServerData> servers = dao.getServerDetails();
@@ -97,11 +87,33 @@ public class ServerDetailsController extends HttpServlet {
 			String environment = request.getParameter("enviormentList");
 			String app_id = request.getParameter("appNameList");
 			String sub_app_id = request.getParameter("subAppNameList");
-			String logPath = request.getParameter("logpath");
+			String logPathCount = request.getParameter("countForLogpath");
+			System.out.println("logpath count  ***** " + logPathCount);
+			List<String> logpaths = new ArrayList<String>();
+			for (int i= 1 ; i <= Integer.parseInt(logPathCount) ; i++)
+			{
+				System.out.println("adding logpath ");
+				logpaths.add(request.getParameter("logpath" + i));
+				
+			}
+			System.out.println("logpaths size " + logpaths.size() + " value at s=zero " + logpaths.get(0));
 			ManageDAO dao = new ManageDAO();
-			dao.addNewServerDetails(servername, ipaddress, environment,
-					Integer.parseInt(app_id), Integer.parseInt(sub_app_id),
-					logPath);
+			int serverID = dao.addNewServerDetails(servername, ipaddress, environment,
+					Integer.parseInt(app_id), Integer.parseInt(sub_app_id));
+			if (serverID > 0) {
+				if (dao.addNewLogPathDetails(serverID,  logpaths) == true) {
+					dao.commitTransaction();
+					dao.closeConnection();
+				} else {
+					dao.rollBackTransaction();
+					System.out.println("Record insertion failed on logpath tables!!!"); 	
+				}
+			}
+			else
+			{
+				  dao.rollBackTransaction();
+	 				System.out.println("Record insertion failed on Server Details tables!!!"); 		
+			}
 			RequestDispatcher rd = getServletContext().getRequestDispatcher(
 					"/AdminHome.jsp");
 			rd.forward(request, response);
@@ -162,6 +174,47 @@ public class ServerDetailsController extends HttpServlet {
 						.getRequestDispatcher("/AdminHome.jsp");
 				rd.forward(request, response);
 			}
-		}	
+		}
+		else if (null != action && action.equalsIgnoreCase("Save")){
+			System.out.println(" *** saving logpatsh ***");
+			String serverId = request.getParameter("serverId");
+			if (null != serverId) {
+				String logPathCount = request
+						.getParameter("countForNewLogpath");
+				List<String> logpaths = new ArrayList<String>();
+				for (int i = 1; i <= Integer.parseInt(logPathCount); i++) {
+					System.out.println("adding logpath ");
+					String inputtedLopPath = request.getParameter("logpath" + i);
+					if(inputtedLopPath!= null && !inputtedLopPath.isEmpty())
+							logpaths.add(inputtedLopPath);
+
+				}
+				if (logpaths.size() > 0) {
+					ManageDAO dao = new ManageDAO();
+					int recordCount = dao.deleteLogPathDetails(Integer
+							.parseInt(serverId));
+					if (recordCount > 0) {
+						if (dao.addNewLogPathDetails(
+								Integer.parseInt(serverId), logpaths) == true) {
+							dao.commitTransaction();
+							dao.closeConnection();
+						} else {
+							dao.rollBackTransaction();
+							System.out
+									.println("Record insertion failed on logpath tables!!!");
+						}
+					} else {
+						dao.rollBackTransaction();
+						System.out
+								.println("Record deletion failed on logpath Details tables!!!");
+					}
+				}
+			}
+			//response.sendRedirect(request.getContextPath()+ "/EditServerDetails.jsp");
+			//RequestDispatcher rd = getServletContext().getRequestDispatcher(
+			//		"/AdminHome.jsp");
+			
+			//rd.forward(request, response);
+		} 
 	}
 }
