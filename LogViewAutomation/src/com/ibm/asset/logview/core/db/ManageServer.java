@@ -1,10 +1,7 @@
 package com.ibm.asset.logview.core.db;
 
 import java.io.InputStream;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.HashMap;
+
 
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelExec;

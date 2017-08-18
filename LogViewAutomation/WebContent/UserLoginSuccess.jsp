@@ -11,7 +11,7 @@
 <%
 if (session.getAttribute("username")==null)
 {
-response.sendRedirect("UserLoginView.jsp");
+response.sendRedirect("login/UserLoginView.jsp");
 }
 %>
 

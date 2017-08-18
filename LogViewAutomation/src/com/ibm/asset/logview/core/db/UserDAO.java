@@ -17,11 +17,11 @@ public class UserDAO {
 		PreparedStatement selectStmt = null;
 		ResultSet rs = null;
 	
-		String sql = "select * from Application_details "
-				+"where Application_id IN "
-				+"(Select ApplictionId from User_Appliction_details "
+		String sql = "select * from ApplicationDetails "
+				+"where ApplicationID IN "
+				+"(Select ApplicationId from UserApplicationDetails "
 				+"where UserId ="
-				+"(Select ID from Login where username= ?))";
+				+"(Select UserID from UserDetails where UserName= ?))";
 		try {
 			selectStmt = SingletonDB.getInstance().getConnection().prepareStatement(sql);
 			selectStmt.setString(1, uname);
@@ -61,9 +61,9 @@ public class UserDAO {
 		PreparedStatement pst = null;
 		ResultSet subApps = null;
 	
-		String sql = "select * from Sub_Application_details "
-				+"where app_id = ? "
-				+"AND user_id=(Select ID from Login where username=?)";
+		String sql = "select * from SubApplicationDetails "
+				+"where ApplicationID = ? "
+				+"AND UserID=(Select UserID from UserDetails where UserName=?)";
 		try {
 			pst = SingletonDB.getInstance().getConnection().prepareStatement(sql);
 			pst.setString(1, appId);
@@ -101,7 +101,7 @@ public class UserDAO {
 				PreparedStatement ps = null;
 				ResultSet environment = null;
 				try {
-					 String sqlQuery = "Select distinct Enviornment from Server_Details where Application_Id=?";
+					 String sqlQuery = "Select distinct Enviornment from ServerDetails where ApplicationID=?";
 						ps = SingletonDB.getInstance().getConnection().prepareStatement(sqlQuery);
 					
 					ps.setString(1, appId);
@@ -136,7 +136,7 @@ public class UserDAO {
 				PreparedStatement ps = null;
 				ResultSet environment = null;
 				try {
-					 String sqlQuery = "Select distinct Enviornment from Server_Details where Sub_app_id=?";
+					 String sqlQuery = "Select distinct Enviornment from ServerDetails where SubAppID=?";
 						ps = SingletonDB.getInstance().getConnection().prepareStatement(sqlQuery);
 					
 					
@@ -173,8 +173,8 @@ public class UserDAO {
 		ResultSet logpath = null;
 		
 		try{
-			String LogpathQuery="Select LogPath from LogPathDetails where Server_ID = "+
-					"(Select ID from Server_Details where Enviornment=? AND ApplicationId=? AND Sub_app_id=?) ";
+			String LogpathQuery="Select LogPath from LogPathDetails where ServerID = "+
+					"(Select ServerID from ServerDetails where Enviornment=? AND ApplicationID=? AND SubAppID=?) ";
 			
 			ps = SingletonDB.getInstance().getConnection().prepareStatement(LogpathQuery);
 			System.out.println("hi 1");

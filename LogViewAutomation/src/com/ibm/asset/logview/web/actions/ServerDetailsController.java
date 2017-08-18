@@ -48,7 +48,6 @@ public class ServerDetailsController extends HttpServlet {
 		{
 			if (null != request.getParameter("appName").toString()) {
 				System.out.println("getting sub app details");
-				String json = null;
 
 				JSONObject responseDetailsJson = new JSONObject();
 				responseDetailsJson.accumulateAll(mDAO.getSubAppNames(request

@@ -41,16 +41,16 @@ $('#appNameList').change(function(event) {
           $('<option>').val(index).text(value).appendTo(select);
       });
         });
-         alert($('#subAppNameList').val());   
+        // alert($('#subAppNameList').val());   
      if ($('#subAppNameList').val() != null) {
     
         $.get('UserController?action=getappEnvironment', {
                 appName : names
         }, function(response) {
-		alert("HI");
+		//alert("HI");
         var select = $('#environmentList');
         select.find('option').remove();
-     	alert(response);   
+     	//alert(response);   
           $.each(response, function(index, value) {
           $('<option>').val(index).text(value).appendTo(select);
       });
@@ -193,13 +193,7 @@ for(Cookie cookie : cookies){
 						<c:forEach var="Environment" items="${environments}">
 						<option value="${Environment.value}"></option>
 					</c:forEach>
-						
-						
-<!-- 						<option value="none">Select</option> -->
-<!-- 						<option value="DEV">DEV</option> -->
-<!-- 						<option value="INT">INT</option> -->
-<!-- 						<option value="CERT">CERT</option> -->
-<!-- 						<option value="PROD">PROD</option> -->
+
 					</select>
 				</td>
 				<td  align="center">

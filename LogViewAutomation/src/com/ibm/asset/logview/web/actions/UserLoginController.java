@@ -1,15 +1,10 @@
 package com.ibm.asset.logview.web.actions;
 
-import java.beans.Statement;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
@@ -41,11 +36,10 @@ public class UserLoginController extends HttpServlet {
 		 String dbpwd = null;
 			String dbrole=null;
 			String availability=null;
-			String CheckValid=null;
 			if(null!= c)
 			{
 				try {
-					java.sql.PreparedStatement st =c.prepareStatement("select * from UserDetails where username = ? ");
+					java.sql.PreparedStatement st =c.prepareStatement("select * from UserDetails where UserName = ? ");
 					st.setString(1, uname);
 					ResultSet rs = st.executeQuery();
 					if (rs.next()) {

@@ -1,16 +1,10 @@
 package com.ibm.asset.logview.web.actions;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+
+
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -56,62 +50,19 @@ public class AdminController extends HttpServlet
     			}
     		
     		}
-    	
-    	
-    	
-    	
-//    	if(action.equalsIgnoreCase("updateUserDetails")) 
-//    		prepareStatement pst=null;
-//		{
-//			System.out.println("Update user details");
-//			
-//			ResultSet UserDetails = SingletonDB.getInstance().getConnection().prepareStatement("SELECT ID,username,password,Role,availability_Status FROM Login");
-//			HttpSession session = request.getSession(true);
-//			session.setAttribute("launchNow", "0");
-//			ArrayList<User> users = new ArrayList<User>();
-//			try {
-//				while(UserDetails.next())
-//				{
-//					System.out.println("getting query results");
-//					User data = new User();
-//					data.setId(UserDetails.getInt("id"));
-//					data.setUsername(UserDetails.getString("username"));
-//					data.setPassword(UserDetails.getString("password"));
-//					data.setRole(UserDetails.getString("Role"));
-//					data.setStatus(UserDetails.getString("availability_Status"));
-//					
-//					System.out.println("updated data");		
-//					
-//					users.add(data);
-//				}
-//				
-//					session.setAttribute("userlist", users);
-//					RequestDispatcher rd = request.getRequestDispatcher("/UpdateUser.jsp");
-//					rd.forward(request, response);
-//					
-//			} catch (SQLException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//			
-//		}
+
 
         
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException 
     {
 
         response.setContentType("text/html");  
-        PrintWriter pw = response.getWriter(); 
-          
-       
-		
-		
-        
+     
         if (request.getParameter("action").equals("Add")) {
         	 String name= request.getParameter("name");
      		String password = request.getParameter("password");
      		String role = request.getParameter("role");
-     		String status= request.getParameter("status");
+     		//String status= request.getParameter("status");
         	System.out.println("In admin controller");
         	ManageDAO mDAO=new ManageDAO();
         	
@@ -126,37 +77,7 @@ public class AdminController extends HttpServlet
 				 } 					 
 		 
         }
-//		ConnectionDetails con = new ConnectionDetails();
-//		Connection c=   con.getConnection();
-//		
-//		try{  
-//			int maxPKValue = con.getMaximumValue("Login", "ID");
-//			maxPKValue++;
-//          PreparedStatement pst =c.prepareStatement("INSERT INTO Login (ID,username,password,Role,availability_Status) VALUES (?, ?, ?, ?, ?)");
-//          pst.setInt(1, maxPKValue);  
-//          pst.setString(2,name);        
-//          pst.setString(3,password);
-//          pst.setString(4,role);
-//          pst.setString(5,"Yes");
-//                          
-//          int i = pst.executeUpdate();
-//          RequestDispatcher rd = getServletContext().getRequestDispatcher("/admin.jsp");
-//			rd.forward(request, response);
-//          c.commit(); 
-//          
-//          if(i!=0){  
-//            System.out.println("Record has been inserted");
-//           
-//          }  
-//          else{  
-//        	  System.out.println("Failed to insert the data");
-//               }  
-//          pst.close();
-//        }  
-//        catch (Exception e){  
-//          pw.println(e);  
-//        }  
-//        }
+
         
         else if(request.getParameter("action").equals("Update")){
         	System.out.println("In admin controller");

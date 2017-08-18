@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.RequestDispatcher;
@@ -16,12 +15,9 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.annotation.WebServlet;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import com.google.gson.reflect.TypeToken;
 import com.ibm.asset.logview.core.db.UserDAO;
 
-import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 
@@ -66,7 +62,6 @@ public class UserController extends HttpServlet {
 			    String uname=session.getAttribute("username").toString();
 				System.out.println(uname);
 				
-				String json = null;
 				JSONObject responseDetailsJson = new JSONObject();
 				
 				String appId=request.getParameter("appName").toString();
@@ -83,7 +78,6 @@ public class UserController extends HttpServlet {
 			if (null == request.getParameter("subAppname")){
 				System.out.println("getting environment");
 				
-				HttpSession session=request.getSession(true);
 				
 				String appId=request.getParameter("appName").toString();
 				System.out.println("*** spp Id " + appId);
@@ -106,7 +100,6 @@ public class UserController extends HttpServlet {
 		
 			if (null != request.getParameter("subAppname")){
 				System.out.println("subapp is not null");
-				HttpSession session=request.getSession(true);
 				
 				String subappId=request.getParameter("subAppname").toString();
 				System.out.println("subapplid" + subappId);

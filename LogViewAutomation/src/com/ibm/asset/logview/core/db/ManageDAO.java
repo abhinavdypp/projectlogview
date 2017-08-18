@@ -34,8 +34,8 @@ public class ManageDAO {
 
 				 while(rs.next())
 				 {
-					 int id = rs.getInt("ID");
-					 String userName=rs.getString("username");
+					 int id = rs.getInt("UserID");
+					 String userName=rs.getString("UserName");
 					 appNamesMap.put(String.valueOf(id), userName);
 					 System.out.println("ID  : "+id);				
 				 }
@@ -72,7 +72,7 @@ public class ManageDAO {
 					try {
 						
 						
-						  String sqlQuery = "UPDATE UserDetails SET LastLogin=? WHERE username=?";
+						  String sqlQuery = "UPDATE UserDetails SET LastLogin=? WHERE UserName=?";
 							pst = SingletonDB.getInstance().getConnection().prepareStatement(sqlQuery);
 							pst.setString(1, timeStamp);
 							pst.setString(2, uname);
@@ -105,7 +105,7 @@ public class ManageDAO {
 				ArrayList<User> users = new ArrayList<User>();
 				ResultSet UserDetails = null;
 				Statement selectStmt = null;
-				String getUserDetailsQuery = "SELECT ID,username,password,Role,availability_Status FROM UserDetails";
+				String getUserDetailsQuery = "SELECT UserID,UserName,Password,Role,AvailabilityStatus FROM UserDetails";
 				try {
 					 selectStmt = SingletonDB.getInstance().getConnection()
 							.createStatement();
@@ -114,11 +114,11 @@ public class ManageDAO {
 					while (UserDetails.next()) {
 						// System.out.println("getting query results");
 						User data = new User();
-						data.setId(UserDetails.getInt("id"));
-						data.setUsername(UserDetails.getString("username"));
+						data.setId(UserDetails.getInt("UserID"));
+						data.setUsername(UserDetails.getString("UserName"));
 						
 						data.setRole(UserDetails.getString("Role"));
-						data.setStatus(UserDetails.getString("availability_Status"));
+						data.setStatus(UserDetails.getString("AvailabilityStatus"));
 									
 						users.add(data);
 					}
@@ -154,10 +154,10 @@ public class ManageDAO {
 							String timeStamp= Date_format.format(today);
 		try {
 			
-			int maxPKValue = getMaximumValue("UserDetails", "ID");
+			int maxPKValue = getMaximumValue("UserDetails", "UserID");
 			maxPKValue++;
 			
-			  String sqlQuery = "INSERT INTO UserDetails (ID,username,password,Role,availability_Status,creation_date) VALUES (?, ?, ?, ?, ?, ?)";
+			  String sqlQuery = "INSERT INTO UserDetails (UserID,UserName,Password,Role,AvailabilityStatus,CreationDate) VALUES (?, ?, ?, ?, ?, ?)";
 				pst = SingletonDB.getInstance().getConnection().prepareStatement(sqlQuery);
 				
 				  pst.setInt(1, maxPKValue);  
@@ -199,7 +199,7 @@ public class ManageDAO {
 		try{
 			
    
-			updateStmt = SingletonDB.getInstance().getConnection().prepareStatement("UPDATE UserDetails SET Role=?, availability_Status=? WHERE ID=?");
+			updateStmt = SingletonDB.getInstance().getConnection().prepareStatement("UPDATE UserDetails SET Role=?, AvailabilityStatus=? WHERE UserID=?");
        		
     		for (int k = 0; k < users.size(); k++) {
     			User data=users.get(k);
@@ -238,12 +238,12 @@ public class ManageDAO {
 			for (int j = 0; j < ids.length; j++) {
 				recordids[j] = Integer.parseInt(ids[j]);
 			}
-			String sql = "DELETE from UserDetails where id = "; 
+			String sql = "DELETE from UserDetails where UserID = "; 
 			for (int k = 0; k < recordids.length; k++) {
 				if (k == 0)
 					sql = sql + recordids[k];
 				else
-					sql = sql + " or id = " + recordids[k];
+					sql = sql + " or UserID = " + recordids[k];
 			}
 			System.out.println(sql);			
 					
@@ -268,11 +268,11 @@ public class ManageDAO {
 		
 		try {
 			
-			 	int maxAppId= getMaximumValue("Application_details", "Application_id");
+			 	int maxAppId= getMaximumValue("ApplicationDetails", "ApplicationId");
 			 	maxAppId ++;
 			    System.out.println("maxAppId : " + maxAppId);
 
-			    String sqlQuery = "INSERT INTO Application_details " +
+			    String sqlQuery = "INSERT INTO ApplicationDetails " +
 						 //   "(Application id, Application Name) " +
 		                      "VALUES(?,?)";
 				insertStmt = SingletonDB.getInstance().getConnection().prepareStatement(sqlQuery);		
@@ -305,11 +305,11 @@ public class ManageDAO {
 		 
 		try {
 			
-				int maxSubAppId= getMaximumValue("Sub_Application_details", "sub_app_ID");
+				int maxSubAppId= getMaximumValue("SubApplicationDetails", "SubAppID");
 				maxSubAppId ++;
 				System.out.println("maxSubAppId : " + maxSubAppId);
 				  
-				  String sqlQuery = "INSERT INTO Sub_Application_details " +
+				  String sqlQuery = "INSERT INTO SubApplicationDetails " +
 						 // 	"(sub_app_id, sub_application name, app_id, user_id) " +
 		                   "VALUES(?,?,?,?)";
 				insertStmt = SingletonDB.getInstance().getConnection().prepareStatement(sqlQuery);
@@ -345,7 +345,7 @@ public class ManageDAO {
 		 
 		try {
 			
-			  String sqlQuery = "INSERT INTO User_Appliction_details " +
+			  String sqlQuery = "INSERT INTO UserApplicationDetails " +
 						 // 	"(UserId, ApplicationId) " +
 		                   "VALUES(?,?)";
 				insertStmt = SingletonDB.getInstance().getConnection().prepareStatement(sqlQuery);
@@ -386,7 +386,7 @@ public class ManageDAO {
 			selectStmt = SingletonDB.getInstance().getConnection()
 					.createStatement();
 			 dbAppnames = selectStmt
-					.executeQuery("select * from Application_details");
+					.executeQuery("select * from ApplicationDetails");
 			while (dbAppnames.next()) {
 				appNamesMap.put(dbAppnames.getString(1),
 						dbAppnames.getString(2));
@@ -423,7 +423,7 @@ public class ManageDAO {
 		Map<String, String> subAppNamesMap = null;
 		ResultSet dbSubAppnames = null;
 		PreparedStatement prepStmt = null;
-		String sql = "select * from Sub_Application_details where app_id = ?";
+		String sql = "select * from SubApplicationDetails where ApplicationID = ?";
 		try {
 			prepStmt = SingletonDB.getInstance().getConnection()
 					.prepareStatement(sql);
@@ -504,14 +504,14 @@ public class ManageDAO {
 		ArrayList<ServerData> servers = new ArrayList<ServerData>();
 		ResultSet rsServerDetails = null;
 		Statement selectStmt = null;
-		String getServerDetailsQuery = "SELECT Server_Details.[id],Server_Details.[Server_Name], Server_Details.[ip_address], Server_Details.Enviornment, "
-				+ "Sub_Application_details.[sub_appliction Name],Application_details.[Application_Name], "
-				+ "Application_details.[application_id], Sub_Application_details.[sub_app_id]"
-				+ " FROM Application_details INNER JOIN "
-				+ "(Sub_Application_details INNER JOIN Server_Details ON Sub_Application_details.sub_app_ID = Server_Details.Sub_app_id) "
-				+ "ON (Application_details.Application_id = Sub_Application_details.app_id) AND "
-				+ "(Application_details.Application_id = Sub_Application_details.app_id) AND "
-				+ "(Application_details.Application_id = Server_Details.[Application_Id])";
+		String getServerDetailsQuery = "SELECT ServerDetails.[ServerID],ServerDetails.[ServerName], ServerDetails.[IpAddress], ServerDetails.Enviornment, "
+				+ "SubApplicationDetails.[SubApplictionName],ApplicationDetails.[ApplicationName], "
+				+ "ApplicationDetails.[ApplicationID], SubApplicationDetails.[SubAppID]"
+				+ " FROM ApplicationDetails INNER JOIN "
+				+ "(SubApplicationDetails INNER JOIN ServerDetails ON SubApplicationDetails.SubAppID = ServerDetails.SubAppID) "
+				+ "ON (ApplicationDetails.ApplicationID = SubApplicationDetails.ApplicationID) AND "
+				+ "(ApplicationDetails.ApplicationID = SubApplicationDetails.ApplicationID) AND "
+				+ "(ApplicationDetails.ApplicationID = ServerDetails.[ApplicationID])";
 
 		try {
 			 selectStmt = SingletonDB.getInstance().getConnection()
@@ -571,10 +571,10 @@ public class ManageDAO {
  {
 		int recordID = 0;
 		PreparedStatement insertStmt = null;
-		 int maxPKValue= getMaximumValue("Server_Details", "id");
+		 int maxPKValue= getMaximumValue("ServerDetails", "ServerID");
 		 int id = maxPKValue + 1 ;
 		try {
-			String sqlQuery = "INSERT INTO Server_Details "
+			String sqlQuery = "INSERT INTO ServerDetails "
 					+ "VALUES(?,?,?,?,?,?)";
 			insertStmt = SingletonDB.getInstance().getConnection()
 					.prepareStatement(sqlQuery);
@@ -652,7 +652,7 @@ public class ManageDAO {
 				insertStmt.setString(3, logPaths.get(k));
 				insertStmt.addBatch();
 			}
-			int[] rowCount = insertStmt.executeBatch();
+			//int[] rowCount = insertStmt.executeBatch();
 			//	int rowCount = insertStmt.executeUpdate();
 			//	if (rowCount > 0)
 					tranStatus = true;
@@ -674,11 +674,11 @@ public class ManageDAO {
 	
 	public void updateServerDetails(List<ServerData> servers)
 	{
-		Boolean tranStatus = false;
+		//Boolean tranStatus = false;
 		PreparedStatement updateStmt = null;
 		
-		 String updateQuery =  "Update Server_Details set Server_Name = ?, ip_address = ?, Enviornment = ?, " +
-				  "Application_Id = ?, Sub_app_id = ? where id = ?";
+		 String updateQuery =  "Update ServerDetails set ServerName = ?, IpAddress = ?, Enviornment = ?, " +
+				  "ApplicationID = ?, SubAppID = ? where ServerID = ?";
 		 
 		 try {
 			updateStmt = SingletonDB.getInstance().getConnection()
@@ -713,12 +713,12 @@ public class ManageDAO {
  {
 		Statement delStmt = null;
 		if (recordids != null && recordids.length > 0) {
-			String removesql = "DELETE from Server_Details where id = ";
+			String removesql = "DELETE from ServerDetails where ServerID = ";
 			for (int k = 0; k < recordids.length; k++) {
 				if (k == 0)
 					removesql = removesql + recordids[k];
 				else
-					removesql = removesql + " or id = " + recordids[k];
+					removesql = removesql + " or ServerID = " + recordids[k];
 			}
 
 			try {
@@ -828,7 +828,7 @@ public class ManageDAO {
 			ArrayList<ApplicationBean> apps = new ArrayList<ApplicationBean>();
 			ResultSet appDetails = null;
 			Statement selectStmt = null;
-			String getUserDetailsQuery = "SELECT * FROM Application_details";
+			String getUserDetailsQuery = "SELECT * FROM ApplicationDetails";
 			try {
 				 selectStmt = SingletonDB.getInstance().getConnection()
 						.createStatement();
@@ -836,8 +836,8 @@ public class ManageDAO {
 				while (appDetails.next()) {
 					// System.out.println("getting query results");
 					ApplicationBean appBean = new ApplicationBean();
-					int appid = appDetails.getInt("Application_id");
-					String appName = appDetails.getString("Application_Name");
+					int appid = appDetails.getInt("ApplicationID");
+					String appName = appDetails.getString("ApplicationName");
 					System.out.println("appid : "+appid +" appName: "+appName);
 					appBean.setApplicationid(appid);
 					appBean.setApplicationname(appName);													
@@ -864,18 +864,18 @@ public class ManageDAO {
  {
 		Statement delStmt = null;
 		if (recordids != null && recordids.length > 0) {
-			String app_removesql = "DELETE from Application_details where Application_id = ";
-			String subApp_removesql = "DELETE from Sub_Application_details where app_id = ";
-			String userApp_removesql = "DELETE from User_Appliction_details where ApplictionId = ";
+			String app_removesql = "DELETE from ApplicationDetails where ApplicationID = ";
+			String subApp_removesql = "DELETE from SubApplicationDetails where ApplicationID = ";
+			String userApp_removesql = "DELETE from UserApplicationdetails where ApplicationId = ";
 			for (int k = 0; k < recordids.length; k++) {
 				if (k == 0){
 					app_removesql = app_removesql + recordids[k];
 						subApp_removesql = subApp_removesql + recordids[k];
 							userApp_removesql = userApp_removesql + recordids[k];
 				}else{
-					app_removesql = app_removesql + " or Application_id = " + recordids[k];
-						subApp_removesql = subApp_removesql + " or app_id = " + recordids[k];
-							userApp_removesql = userApp_removesql + " or ApplictionId = " + recordids[k];
+					app_removesql = app_removesql + " or ApplicationID = " + recordids[k];
+						subApp_removesql = subApp_removesql + " or ApplicationID = " + recordids[k];
+							userApp_removesql = userApp_removesql + " or ApplicationId = " + recordids[k];
 				}  
 			}
 
@@ -934,7 +934,7 @@ public class ManageDAO {
 			ArrayList<SubApplicationBean> sapps = new ArrayList<SubApplicationBean>();
 			ResultSet appDetails = null;
 			Statement selectStmt = null;
-			String getUserDetailsQuery = "SELECT * FROM Sub_Application_details";
+			String getUserDetailsQuery = "SELECT * FROM SubApplicationDetails";
 			try {
 				 selectStmt = SingletonDB.getInstance().getConnection()
 						.createStatement();
@@ -942,8 +942,8 @@ public class ManageDAO {
 				while (appDetails.next()) {
 					// System.out.println("getting query results");
 					SubApplicationBean sappBean = new SubApplicationBean();
-					int sappid = appDetails.getInt("sub_app_ID");
-					String sappName = appDetails.getString("sub_appliction Name");
+					int sappid = appDetails.getInt("SubAppID");
+					String sappName = appDetails.getString("SubApplictionName");
 					System.out.println("sub_app_ID : "+sappid +" sub_appliction: "+sappName);
 					sappBean.setSubapplicationid(sappid);
 					sappBean.setSubapplicationname(sappName);													
@@ -970,13 +970,13 @@ public class ManageDAO {
 {
 		Statement delStmt = null;
 		if (recordids != null && recordids.length > 0) {
-			String subApp_removesql = "DELETE from Sub_Application_details where sub_app_ID = ";
+			String subApp_removesql = "DELETE from SubApplicationDetails where SubAppID = ";
 			
 			for (int k = 0; k < recordids.length; k++) {
 				if (k == 0){
 						subApp_removesql = subApp_removesql + recordids[k];
 				}else{
-						subApp_removesql = subApp_removesql + " or sub_app_ID = " + recordids[k];
+						subApp_removesql = subApp_removesql + " or SubAppID = " + recordids[k];
 				}  
 			}
 
