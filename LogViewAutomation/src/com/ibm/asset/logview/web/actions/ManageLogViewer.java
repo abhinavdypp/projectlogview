@@ -34,11 +34,11 @@ public class ManageLogViewer extends HttpServlet {
 		// TODO Auto-generated method stub
 		
 		ManageServer msc = new ManageServer();
-		String host ="96.130.128.170";
+		String host ="96.43.65.244";//"96.130.128.169";//"96.130.128.170";
 		String user ="arcbot01";
 		int port =22;
 //		String command ="tail -400 /var/log/Histlogs/Syslog/datapwr | grep -v acsaywg01001 | grep error";
-		String command ="more /opt/ibm/crt1/svc/wci/logs/wci.log";		
+		String command ="more /opt/ibm/crt1/svc/wci/logs/wci.log";//"more /opt/ibm/crt1/svc/wci/logs/wci.log";		
 		try{
 			
 			System.out.println(" inside doGet ManageLogViewer class");

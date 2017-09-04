@@ -2,45 +2,30 @@ package com.ibm.asset.logview.core.db;
 
 import java.io.InputStream;
 
-
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
 import com.jcraft.jsch.UserInfo;
 
-//import dbdetails.Exc.MyUserInfo;
+public class SearchCriteria {
 
-public class ManageServer {
 	
-	
-	/**
-	 * This function will return log detail based on the input parameters
-	 * @return
-	 */
-	
-	public String getLogDetail(String host, String user, int port, String command) {
+public String getLogDetail(String host, String user, int port, String command) {
 		
         JSch jsch=new JSch(); 
         String outputLog = null;        
  		
 	    try{
 	    	
-	        System.out.println("user : "+user);
-	        System.out.println("host : "+host);	        
-	        System.out.println("port : "+port);	        
-	        System.out.println("command : "+command);
+	        System.out.println("user : "+ user + " host : "+host + " port : "+port + " command : "+command);
 	        
-//	        String command1="cd /var/log/Histlogs/Syslog";	   
-//	        System.out.println("command1 :"+command1);
-
 	        Session session=jsch.getSession(user, host, port);	       
 	        // username and password will be given via UserInfo interface.
 	        UserInfo ui=new MyUserInfo();
 	        session.setUserInfo(ui);
 	        session.connect();	   
 	        Channel channel=session.openChannel("exec");
-//	        ((ChannelExec)channel).setCommand(command1);
 	        ((ChannelExec)channel).setCommand(command);
 	        channel.setInputStream(null);
 	        ((ChannelExec)channel).setErrStream(System.err);	   
@@ -56,14 +41,11 @@ public class ManageServer {
 	            int i=in.read(tmp, 0, 10240);
 	            if(i<0)break;
 	            outputLog = new String(tmp, 0, i);
-//	            System.out.print(new String(tmp, 0, i));
 	            System.out.println("outputLog :"+outputLog.toString());
 	          }
 	          if(channel.isClosed()){
 	        	System.out.println("Inside close channel");
 	            System.out.println("exit-status: "+channel.getExitStatus());
-//	            if(outputLog != null)
-//	            outputLog=String.valueOf(channel.getExitStatus());
 	            break;
 	            	            
 	          }

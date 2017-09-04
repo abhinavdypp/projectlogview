@@ -72,4 +72,17 @@
   	<servlet-name>ManageLogViewer</servlet-name>
   	<url-pattern>/ManageLogViewer</url-pattern>
   </servlet-mapping>
+  
+  <servlet>
+  	<description>
+  	</description>
+  	<display-name>LogSearchCriteriaController</display-name>
+  	<servlet-name>LogSearchCriteriaController</servlet-name>
+  	<servlet-class>com.ibm.asset.logview.web.actions.LogSearchCriteriaController</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>LogSearchCriteriaController</servlet-name>
+    <url-pattern>/LogSearchCriteriaController</url-pattern>
+  </servlet-mapping>
+  
 </web-app>
