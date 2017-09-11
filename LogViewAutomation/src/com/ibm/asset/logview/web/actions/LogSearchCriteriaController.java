@@ -50,10 +50,9 @@ public class LogSearchCriteriaController extends HttpServlet {
 		if (null != fromDate) {
 			if ((null != timeSearch && !timeSearch.isEmpty())
 					&& (null != searchText && !searchText.isEmpty())) {
-				command = "sed -n '/" + fromDate + " " + timeSearch + "/,$p'"
-						+ fileName
-						+ " | grep --after-context=5 --before-context=5 '"
-						+ searchText + "' ";
+				command = "awk '/"
+					+ fromDate + " " + timeSearch + "/{print}' " + fileName + " | awk '/"
+					+ searchText + "/{print}' " + fileName;;
 			} else if (null != timeSearch && !timeSearch.isEmpty()) {
 				command = "sed -n '/" + fromDate + " " + timeSearch + "/,$p'"
 						+ fileName;

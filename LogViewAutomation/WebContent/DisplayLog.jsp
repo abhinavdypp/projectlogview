@@ -67,6 +67,17 @@ function cancelForm() {
             saveTextAsFile();
         });
  });
+ 
+ function validateFields(form){
+ 	var fromDateField = document.getElementById("fromDate").value;
+    if (fromDateField.match(/^(?:(19|20)[0-9]{2}[\- \/.](0[1-9]|1[012])[\- \/.](0[1-9]|[12][0-9]|3[01]))$/)){
+    	return true;
+  	}else{
+  		document.getElementById("error").innerHTML="*Enter date format in yyyy-mm-dd*";
+        return false;
+  }
+  }
+          
 </script>
 </head>
 
@@ -85,7 +96,7 @@ function cancelForm() {
 				src="http://www.bitpad.com/.a/6a00d834202e5653ef0133f0e26640970b-pi"
 				width="120" height="80"></td>
 			<td align="center" width="10500" height="80"
-				style="font-size: 36px; color: #d50e21";><b>LogView 
+				style="font-size: 36px; color: #d50e21";><b>LogView
 			Application</b></td>
 			<td width="150" height="80"><img
 				src="https://fontmeme.com/images/IBM-Logo.jpg" width="120"
@@ -101,25 +112,27 @@ function cancelForm() {
 <center>
 <h2>Search Application Logs</h2>
 
-<form method="POST" name="addApp" action="LogSearchCriteriaController">
-
+<form method="POST" name="addApp" action="LogSearchCriteriaController"
+	onsubmit="return validateFields(this)">
+<div id="error"></div>
 
 <table border="1" cellpadding="5">
-		<tr>
-		<td>Select Time:</td>
-		<td><input title="dd/mm/yyyy" type="text" name="fromDate" class="tooltip"
-			id="fromDate" style=""> <span class="tooltiptext">Date Format:
-		yyyy-mm-dd</span>
-	</td>
+	<tr>
+		<td>*Enter Date:</td>
+		<td><input title="yyyy-mm-dd" type="text" name="fromDate"
+			class="tooltip" id="fromDate" style=""> <span
+			class="tooltiptext">Date Format: yyyy-mm-dd</span></td>
 	</tr>
 	<tr>
 		<td>Enter Search Text:</td>
-		<td><input id="searchText" type="text" name="searchText">	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Time
+		<td><input id="searchText" type="text" name="searchText">
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Time
 		in hh:mm: <input type="text" name="timeSearch"></td>
 
 	</tr>
 	<tr>
-		<td colspan="3"><input type="submit" name="submit" value="Submit"><input type="button" id="download" name="download" value="Download">
+		<td colspan="3"><input type="submit" name="submit" value="Submit"><input
+			type="button" id="download" name="download" value="Download">
 		<input type="button" name="cancel" onclick="cancelForm()"
 			value="Cancel"></td>
 
