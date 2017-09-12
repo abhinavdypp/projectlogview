@@ -10,6 +10,14 @@ import com.jcraft.jsch.UserInfo;
 
 public class SearchCriteria {
 
+	/**
+	 * Created on Sep 11, 2017
+	 * <p>
+	 * Description: SearchCriteria is used to get log details from specified server and user can search based on 
+	 * time and text value.
+	 * 
+	 * Author :Abhinav Jaiswal
+	 */
 	
 public String getLogDetail(String host, String user, int port, String command) {
 		

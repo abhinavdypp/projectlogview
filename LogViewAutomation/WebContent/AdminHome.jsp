@@ -74,7 +74,7 @@ function changeAppView()
   <li><a class="active" href="<%=request.getContextPath()%>/AdminController?action=updateUserDetails" name="updateUserDetails" id="updateUserDetails"><b>Accounts</b></a></li>
   <li><a  href="#" onclick="changeStyle()"><b>Servers</b></a>  </li>  
   <li><a  href="#" onclick="changeAppView()"><b>Applications</b></a>  </li>
-  <li><a class="active" href="<%=request.getContextPath()%>/ManageLogViewer" name="logViewer" id="logViewer"><b>LogViewer</b></a></li>
+  <li><a class="active" href="<%=request.getContextPath()%>/LogSearchCriteriaController" name="logViewer" id="logViewer"><b>LogViewer</b></a></li>
   <li><a href="#"><b>About</b></a></li>
   
   <li style=" position:absolute;right:0; text-align:right "><a href="#"><b>Logout</b></a></li>

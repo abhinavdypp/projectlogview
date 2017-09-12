@@ -57,20 +57,9 @@
     <servlet-name>AdminController</servlet-name>
     <servlet-class>com.ibm.asset.logview.web.actions.AdminController</servlet-class>
   </servlet>
-  <servlet>
-  	<description>
-  	</description>
-  	<display-name>ManageLogViewer</display-name>
-  	<servlet-name>ManageLogViewer</servlet-name>
-  	<servlet-class>com.ibm.asset.logview.web.actions.ManageLogViewer</servlet-class>
-  </servlet>
   <servlet-mapping>
     <servlet-name>AdminController</servlet-name>
     <url-pattern>/AdminController</url-pattern>
-  </servlet-mapping>
-  <servlet-mapping>
-  	<servlet-name>ManageLogViewer</servlet-name>
-  	<url-pattern>/ManageLogViewer</url-pattern>
   </servlet-mapping>
   
   <servlet>

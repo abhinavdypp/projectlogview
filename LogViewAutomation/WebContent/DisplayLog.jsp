@@ -1,7 +1,17 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	pageEncoding="ISO-8859-1"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-
+<%--
+ //*********************************************************************
+ //* Security: IBM Confidential
+ //* IBM Log View Automation
+ //* Package: 
+ //* Created on Sep 11, 2017
+ //* LogSearchCriteriaController is used to get log details from specified server and user can search based on 
+ //* time and text value
+ //* Author : Abhinav Jaiswal
+ //*********************************************************************
+ --%>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
@@ -10,17 +20,20 @@
 <script type="text/javascript">
 
 $(document).ready(function () {
-function cancelForm() {
-    var callAdmin = "AdminHome.jsp";
-    window.location.href = callAdmin;
-} 
+
+        $("#download").click(function (e) {
+            e.preventDefault();
+            saveTextAsFile();
+        });
+ });
+
         function saveTextAsFile() {
             // grab the content of the form field and place it into a variable
             var textToWrite = document.getElementById("logContent").value;
             //  create a new Blob (html5 magic) that conatins the data from your form feild
             var textFileAsBlob = new Blob([textToWrite], { type: 'text/plain' });
             // Specify the name of the file to be saved
-            var fileNameToSaveAs = "myNewFile.txt";
+            var fileNameToSaveAs = "LogView.txt";
 
             // Optionally allow the user to choose a file name by providing 
             // an imput field in the HTML and using the collected data here
@@ -60,23 +73,20 @@ function cancelForm() {
         }
 
 
-
-        $("#download").click(function (e) {
-
-            e.preventDefault();
-            saveTextAsFile();
-        });
- });
  
  function validateFields(form){
  	var fromDateField = document.getElementById("fromDate").value;
     if (fromDateField.match(/^(?:(19|20)[0-9]{2}[\- \/.](0[1-9]|1[012])[\- \/.](0[1-9]|[12][0-9]|3[01]))$/)){
     	return true;
   	}else{
-  		document.getElementById("error").innerHTML="*Enter date format in yyyy-mm-dd*";
+  		document.getElementById("error").innerHTML="*Enter date format in yyyy-MM-dd*";
         return false;
+  	}
   }
-  }
+	function cancelForm() {
+	    var callAdmin = "AdminHome.jsp";
+   		window.location.href = callAdmin;
+	} 
           
 </script>
 </head>
@@ -114,14 +124,13 @@ function cancelForm() {
 
 <form method="POST" name="addApp" action="LogSearchCriteriaController"
 	onsubmit="return validateFields(this)">
-<div id="error"></div>
+<div id="error" style="color:red;float:left;width:600px;"></div>
 
 <table border="1" cellpadding="5">
 	<tr>
 		<td>*Enter Date:</td>
-		<td><input title="yyyy-mm-dd" type="text" name="fromDate"
-			class="tooltip" id="fromDate" style=""> <span
-			class="tooltiptext">Date Format: yyyy-mm-dd</span></td>
+		<td><input title="yyyy-MM-dd" type="text" name="fromDate"
+			id="fromDate" style=""> <span>Date Format: yyyy-MM-dd</span></td>
 	</tr>
 	<tr>
 		<td>Enter Search Text:</td>
@@ -133,8 +142,7 @@ function cancelForm() {
 	<tr>
 		<td colspan="3"><input type="submit" name="submit" value="Submit"><input
 			type="button" id="download" name="download" value="Download">
-		<input type="button" name="cancel" onclick="cancelForm()"
-			value="Cancel"></td>
+		 <input type="button" name="cancel" onclick="cancelForm()" value="Cancel"></td>
 
 	</tr>
 	<tr>
