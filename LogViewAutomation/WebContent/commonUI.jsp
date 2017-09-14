@@ -7,8 +7,12 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>Insert title here</title>
+<style>
+body{
+background: rgba(255, 255, 255, .75);
+}</style>
 </head>
-<body background="http://piranahimpressions.com/img/seq-slider/bg-clouds.jpg" link="black" alink="black" vlink="black">
+<body background="http://piranahimpressions.com/img/seq-slider/bg-clouds.jpg" style="opacity:0.2;filter:alpha(opacity=20);" link="black" alink="black" vlink="black">
 <div>
 <table border=0 style="position:absolute; top:0px;">
 <tbody>

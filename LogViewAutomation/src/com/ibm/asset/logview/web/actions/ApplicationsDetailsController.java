@@ -65,9 +65,9 @@ public class ApplicationsDetailsController extends HttpServlet {
 		try {	
 			    System.out.println("inside get user details");	    
 			    HttpSession session = request.getSession(true);
-		        session.setAttribute("usernames", mDAO.getUserDetails());
-			    RequestDispatcher rd = getServletContext().getRequestDispatcher("/ApplicationDetails.jsp");
-			    rd.forward(request, response);
+		        session.setAttribute("groupnames", mDAO.getGroupDetails());
+			   // RequestDispatcher rd = getServletContext().getRequestDispatcher("/ApplicationDetails.jsp");
+			   // rd.forward(request, response);
 			    
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -100,9 +100,9 @@ public class ApplicationsDetailsController extends HttpServlet {
 					ManageDAO dao = new ManageDAO();
 					dao.deleteApplicationDetails(recordids);
 				}
-				RequestDispatcher rd = getServletContext()
-						.getRequestDispatcher("/AdminHome.jsp");
-				rd.forward(request, response);
+			//	RequestDispatcher rd = getServletContext()
+				//		.getRequestDispatcher("/AdminHome.jsp");
+			//	rd.forward(request, response);
 			  
 		    }else if(action!= null &&  action.equalsIgnoreCase("deletesubApp")){
 
@@ -119,19 +119,19 @@ public class ApplicationsDetailsController extends HttpServlet {
 					ManageDAO dao = new ManageDAO();
 					dao.deleteSubApplicationDetails(recordids);
 				}
-				RequestDispatcher rd = getServletContext()
-						.getRequestDispatcher("/AdminHome.jsp");
-				rd.forward(request, response);
+			//	RequestDispatcher rd = getServletContext()
+			//			.getRequestDispatcher("/AdminHome.jsp");
+			//	rd.forward(request, response);
 		    	
-		    }else{
+		    }else if(action!= null &&  action.equalsIgnoreCase("Add")){
 
 			  String appName = request.getParameter("appName");
 			  String subAppName = request.getParameter("subAppName");
-			  String userId=request.getParameter("userNameList");
+			  String groupId=request.getParameter("grpNameList");
 
 			  System.out.println("app Name :"+appName);
 			  System.out.println("subAppName :"+subAppName);
-			  System.out.println("user Id :"+userId);
+			  System.out.println("group Id :"+groupId);
 			  	  
 			  ManageDAO mDAO = new ManageDAO();
 			  
@@ -141,10 +141,10 @@ public class ApplicationsDetailsController extends HttpServlet {
 				
 	 			 if(appId>0){
 
-	 				 if(mDAO.addSubApplicationDetails(subAppName, appId, userId)== true){
+	 				 if(mDAO.addSubApplicationDetails(subAppName, appId, groupId)== true){
 			 			 System.out.println("addSubApplicationDetails done");
 	 					 
-			 			 if(mDAO.addUserApplicationDetails(userId, appId )==true){
+			 			 if(mDAO.addUserApplicationDetails(groupId, appId )==true){
 			 				 System.out.println("addUserApplicationDetails done");
 			 				 System.out.println("Record insertion completed on APP, SUB APP, User APP tables!!!");		 				
 			 				 mDAO.commitTransaction();
@@ -160,8 +160,8 @@ public class ApplicationsDetailsController extends HttpServlet {
 		 				System.out.println("Record insertion failed on APP, SUB APP, User APP tables!!!"); 				 
 	 			 }	
 				 
-	 			 RequestDispatcher rd = getServletContext().getRequestDispatcher("/AdminHome.jsp");
-				 rd.forward(request, response);			  			  
+	 		//	 RequestDispatcher rd = getServletContext().getRequestDispatcher("/AdminHome.jsp");
+			//	 rd.forward(request, response);			  			  
 		  }
 
 			

@@ -57,8 +57,10 @@ public class AdminController extends HttpServlet
     {
 
         response.setContentType("text/html");  
-     
-        if (request.getParameter("action").equals("Add")) {
+        try{
+        	String action = request.getParameter("action");
+        	System.out.println("AdminController :: " + action);
+        if (action!= null && action.equals("Add")) {
         	 String name= request.getParameter("name");
      		String password = request.getParameter("password");
      		String role = request.getParameter("role");
@@ -68,9 +70,9 @@ public class AdminController extends HttpServlet
         	
         	if(mDAO.addLoginDetails(name, password, role)==true){
         		System.out.println("Record has been inserted");
-        		RequestDispatcher rd = getServletContext()
-						.getRequestDispatcher("/AdminHome.jsp");
-				rd.forward(request, response);
+        		//RequestDispatcher rd = getServletContext()
+				//		.getRequestDispatcher("/AdminHome.jsp");
+				//rd.forward(request, response);
         	}else{
 				 mDAO.rollBackTransaction();
 				 System.out.println("Record insertion failed ");
@@ -101,9 +103,9 @@ public class AdminController extends HttpServlet
         			ManageDAO mDAO=new ManageDAO();
         			
         	if(	mDAO.updateData(lstUserUpdate)==true){
-        		RequestDispatcher rd = getServletContext()
-						.getRequestDispatcher("/AdminHome.jsp");
-				rd.forward(request, response);
+        		//RequestDispatcher rd = getServletContext()
+				//		.getRequestDispatcher("/AdminHome.jsp");
+				//rd.forward(request, response);
 				System.out.println("Records updated");
         	}else{
 				 mDAO.rollBackTransaction();
@@ -111,51 +113,34 @@ public class AdminController extends HttpServlet
 				  }		 
         	}
         	
-        else if (null != request.getParameter("delete")) {
-				System.out.println("delete records"
+				else if (null != request.getParameter("delete")) {
+					System.out.println("delete records"
 							+ request.getParameter("selectedids"));
 
-				String selectedRecords = request.getParameter("selectedids");
-				ManageDAO mDAO=new ManageDAO();
-					if(mDAO.deleteUserDetails(selectedRecords)==true){
-				RequestDispatcher rd = getServletContext().getRequestDispatcher("/AdminHome.jsp");
-					rd.forward(request, response);
-					
-		        System.out.println("Record has been deleted");
-		        		
-		        	}else{
-						 mDAO.rollBackTransaction();
-						 System.out.println("Record delettion failed ");
-						 } 			
-			 }
+					String selectedRecords = request
+							.getParameter("selectedids");
+					ManageDAO mDAO = new ManageDAO();
+					if (mDAO.deleteUserDetails(selectedRecords) == true) {
+						// RequestDispatcher rd =
+						// getServletContext().getRequestDispatcher("/AdminHome.jsp");
+						// rd.forward(request, response);
+
+						System.out.println("Record has been deleted");
+
+					} else {
+						mDAO.rollBackTransaction();
+						System.out.println("Record delettion failed ");
+					}
+				}
         	}
-        }}
-							
+        }
+	catch(Exception e )
+	{
+		System.out.println("Admin Controller :: Exception occured " + e.getMessage());
+		response.setStatus(400);
+		 response.getWriter().write(e.getMessage());
+	}
+}
+}//end of class			
         	     	
-    		
-//    		else if (null != request.getParameter("delete")) {
-//    			String selectedRecords = request.getParameter("selectedids");
-//    			System.out.println("in controller");
-//				if (null != selectedRecords) {
-//					String[] ids = selectedRecords.split(",");
-//					int[] recordids = new int[ids.length];
-//					for (int j = 0; j < ids.length; j++) {
-//						recordids[j] = Integer.parseInt(ids[j]);
-//					}
-//					String sql = "DELETE from Login where id = "; 
-//					for (int k = 0; k < recordids.length; k++) {
-//						if (k == 0)
-//							sql = sql + recordids[k];
-//						else
-//							sql = sql + " or id = " + recordids[k];
-//					}
-//					System.out.println(sql);
-//					ConnectionDetails con = new ConnectionDetails();
-//	        		Connection c=   con.getConnection();
-//					try {
-//						c.createStatement().executeUpdate(sql);
-//					} catch (SQLException e) {
-//						// TODO Auto-generated catch block
-//						e.printStackTrace();
-//					}
-			
+  			

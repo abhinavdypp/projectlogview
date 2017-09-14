@@ -6,7 +6,16 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-
+<style>
+body { 
+    background-color: transparent;
+}
+body
+{
+font-family:Arial;
+font-size: 12px;
+}
+</style>
 <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
  <script type="text/javascript">
  
@@ -89,38 +98,53 @@ $('#appNameList').change(function(event) {
         document.getElementById("errorMsg").innerHTML = "Please enter logpath";
         return false;
     }
+    return true;
 } 
 
  function openPage(pageURL)
  {
  window.location.href = pageURL;
  }
+/* function formSubmit(){
+ alert(' Action completed succssfully');
  
+	return true;
+	} */
+
+ function formSubmit(){
+
+ $.ajax({
+ 	type:'POST',
+     url:"ServerDetailsController?action=Add",
+     data: $("#serverform").serialize(),
+     success: function (data) {
+		//  $('#result').html(data);
+							alert(' Data Saved succssfully');
+							parent.unload();
+						},
+	error: function(jqXHR,error, errorThrown) {
+					
+						alert ('Unexpected error occured! Please try again');
+						//parent.UpdateUser();
+					}					
+					});
+					
+		}	
+
+	
 </script>
 <title>Insert title here</title>
 
-
 </head>
-<body  background="http://piranahimpressions.com/img/seq-slider/bg-clouds.jpg" link="black" alink="black" vlink="black">
-<center>
+<body  ><center>
 
-
-<div>
-<table border=0 style="position:absolute; top:0px;">
-<tbody>
-	<tr>
-		<td width="150" height="80"><img src="http://www.bitpad.com/.a/6a00d834202e5653ef0133f0e26640970b-pi" width="120" height="80"></td>
-		<td align="center" width="10500" height="80" style="font-size:36px; color:#d50e21";><b>LogView Application</b></td>
-		<td width="150" height="100"><img src="https://fontmeme.com/images/IBM-Logo.jpg" width="120" height="100"></td></b>
-	</tr>	
-</tbody></table></div>
-
-<div id="errorMsg" name="errorMsg" align="left" style="width: 729px; color:red; padding-top:100px;  padding-left: 390px;">
+<h2>Add New Server</h2>
+<div id="errorMsg" name="errorMsg" align="left" style="width: 729px; color:red;   padding-left: 390px;">
 
 </div>
 
-		<div align="left" style="width: 729px; height: 247px; padding-top: 20px; padding-left: 390px;">
-			<form method="POST" action="ServerDetailsController"  onsubmit="return validateForm()" name="serverform">
+		<div align="center" style="width: 729px; height: 247px; padding-top: 20px; ">
+			<form method="POST" action=""  onsubmit="return validateForm()" name="serverform" id="serverform">
 				<table width="50%" height="200px;" id="NewServerDetails"><tr>
 				<td> Application Name :
 				</td>
@@ -182,6 +206,31 @@ $('#appNameList').change(function(event) {
 				</tr>
 				<tr>
 				<td>
+				Server Login Id:
+				</td>
+				<td align="right">
+				<input type="text" name="loginid" style="width: 100%">
+				</td>
+				</tr>
+				<tr>
+				<td>
+				Server password:
+				</td>
+				<td align="right">
+				<input type="password" name="serverpass">
+				</td>
+				</tr>
+				<tr>
+				<tr>
+				<td>
+				Log File Name on Server:
+				</td>
+				<td align="right">
+				<input type="text" name="fileName" style="width: 100%">
+				</td>
+				</tr>
+				<tr>
+				<td>
 				Enter LogPath:
 				</td>
 				<td align="right">
@@ -194,19 +243,12 @@ $('#appNameList').change(function(event) {
 				 <a href="#" id="addLogPath">Add another Logpath</a>
 				</td>
 				</tr>	
-				<tr><td></td></tr>
-				<tr>
-				<td  align="center">
-				<input type="submit" name="action" style="width:150px;"
-					value="Add">
-				</td>
-				<td   align="center">
-				<input type="button"  style="width:150px;"
-					value="Cancel" onclick="openPage('AdminHome.jsp')">
-				</td>
-				</tr>
-				</table>
+				
+				</table><br>
 				<input type="hidden" id="countForLogpath"  name = "countForLogpath"  value="1"/>
+				<input type="button" name="action" style="width:150px;"
+					value="Add" onclick="formSubmit();">
+				
 				<br> <br> 
 			</form>
 		</div>

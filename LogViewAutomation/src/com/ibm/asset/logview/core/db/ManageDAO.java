@@ -298,7 +298,7 @@ public class ManageDAO {
 	}	
 
 	// To add new entry into sub application table which returns status of insertion.
-	public Boolean addSubApplicationDetails(String subAppName, int appId, String userId)
+	public Boolean addSubApplicationDetails(String subAppName, int appId, String groupId)
 	{
 		Boolean tranStatus=false;
 		PreparedStatement insertStmt = null;
@@ -317,7 +317,7 @@ public class ManageDAO {
 				insertStmt.setInt(1, maxSubAppId);
 				insertStmt.setString(2, subAppName);
 				insertStmt.setInt(3, appId);
-				insertStmt.setInt(4, Integer.parseInt(userId));				
+				insertStmt.setInt(4, Integer.parseInt(groupId));				
 				int rowCount = insertStmt.executeUpdate();			
 
 				if(rowCount>0)
@@ -338,7 +338,7 @@ public class ManageDAO {
 	}
 	
 	// To add new entry into user application table	which returns status of insertion.
-	public Boolean addUserApplicationDetails(String userId, int appId)
+	public Boolean addUserApplicationDetails(String groupId, int appId)
 	{
 		Boolean tranStatus=false;
 		PreparedStatement insertStmt = null;
@@ -350,7 +350,7 @@ public class ManageDAO {
 		                   "VALUES(?,?)";
 				insertStmt = SingletonDB.getInstance().getConnection().prepareStatement(sqlQuery);
 				
-				insertStmt.setInt(1, Integer.parseInt(userId));
+				insertStmt.setInt(1, Integer.parseInt(groupId));
 				insertStmt.setInt(2, appId);
 				
 				int rowCount = insertStmt.executeUpdate();
@@ -567,7 +567,7 @@ public class ManageDAO {
 		return servers;
 	}
 	
-	public int addNewServerDetails( String servername , String ipaddress , String environment, int app_id, int sub_app_id)
+	public int addNewServerDetails( String servername , String ipaddress , String environment, int app_id, int sub_app_id, String userId, String userPwd, String fileName)
  {
 		int recordID = 0;
 		PreparedStatement insertStmt = null;
@@ -575,7 +575,7 @@ public class ManageDAO {
 		 int id = maxPKValue + 1 ;
 		try {
 			String sqlQuery = "INSERT INTO ServerDetails "
-					+ "VALUES(?,?,?,?,?,?)";
+					+ "VALUES(?,?,?,?,?,?,?,?,?)";
 			insertStmt = SingletonDB.getInstance().getConnection()
 					.prepareStatement(sqlQuery);
 			insertStmt.setInt(1, id);
@@ -584,6 +584,9 @@ public class ManageDAO {
 			insertStmt.setString(4, environment);
 			insertStmt.setInt(5, app_id);
 			insertStmt.setInt(6, sub_app_id);
+			insertStmt.setString(7, userId);
+			insertStmt.setString(8, userPwd);
+			insertStmt.setString(9, fileName);
 			
 			System.out.println(id);
 			System.out.println(servername+ " " +ipaddress + " "+environment);
@@ -652,7 +655,7 @@ public class ManageDAO {
 				insertStmt.setString(3, logPaths.get(k));
 				insertStmt.addBatch();
 			}
-			//int[] rowCount = insertStmt.executeBatch();
+			int[] rowCount = insertStmt.executeBatch();
 			//	int rowCount = insertStmt.executeUpdate();
 			//	if (rowCount > 0)
 					tranStatus = true;
@@ -672,7 +675,7 @@ public class ManageDAO {
 		}
 	
 	
-	public void updateServerDetails(List<ServerData> servers)
+	public void updateServerDetails(List<ServerData> servers)throws SQLException
 	{
 		//Boolean tranStatus = false;
 		PreparedStatement updateStmt = null;
@@ -697,6 +700,7 @@ public class ManageDAO {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			throw e;
 		}finally {
 			try {
 				if (null != updateStmt)
@@ -999,6 +1003,76 @@ public class ManageDAO {
 		}
 	}
 	
+	public Map<String, String> getGroupDetails()
+	{
+		Map<String, String> groupNamesMap = new HashMap<String, String>();
+		Statement selectStmt = null;
+		ResultSet rs = null;
+		 
+		try {
+			
+			 selectStmt = SingletonDB.getInstance().getConnection().createStatement();
+			 rs = selectStmt.executeQuery("select * from GroupDetails");
+
+			 while(rs.next())
+			 {
+				 int id = rs.getInt("GroupID");
+				 String groupName=rs.getString("GroupName");
+				 groupNamesMap.put(String.valueOf(id), groupName);
+				 System.out.println("ID  : "+id);				
+			 }
+		
+			} catch (SQLException ex) {
+					 ex.printStackTrace();
+			} finally {
+					try {
+						if (null != rs)
+							rs.close();
+						if (null != selectStmt)
+							selectStmt.close();
+//						if (null != SingletonDB.getInstance().getConnection())
+//							SingletonDB.getInstance().getConnection().close();
+
+					} catch (Exception ex) {
+						ex.printStackTrace();
+					}
+				}		
+		return groupNamesMap;
+	}	
+	
+	public boolean grantAccessToUser(int userId , int groupId)
+	 {
+			Boolean tranStatus = false;
+			PreparedStatement insertStmt = null;
+			int maxPKValue = getMaximumValue("UserGroupDetails", "UserGroupID");
+			int id = maxPKValue;
+			id= id+1;
+			try {
+				String sqlQuery = "INSERT INTO UserGroupDetails " + "VALUES(?,?,?)";
+				insertStmt = SingletonDB.getInstance().getConnection()
+						.prepareStatement(sqlQuery);
+				insertStmt.setInt(1, id);
+				insertStmt.setInt(2, groupId);
+				insertStmt.setInt(3, userId);
+
+				// int[] rowCount = insertStmt.executeBatch();
+				int rowCount = insertStmt.executeUpdate();
+				if (rowCount > 0)
+					tranStatus = true;
+			} catch (SQLException ex) {
+				ex.printStackTrace();
+			} finally {
+				try {
+					if (null != insertStmt)
+						insertStmt.close();
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+
+			return tranStatus;
+
+		}
 	
 	
 

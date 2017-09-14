@@ -20,8 +20,9 @@ public class UserDAO {
 		String sql = "select * from ApplicationDetails "
 				+"where ApplicationID IN "
 				+"(Select ApplicationId from UserApplicationDetails "
-				+"where UserId ="
-				+"(Select UserID from UserDetails where UserName= ?))";
+				+"where GroupId IN "
+				+"(Select distinct(GroupId) from UserGroupDetails where UserId ="
+				+"(Select UserID from UserDetails where UserName= ?)))";
 		try {
 			selectStmt = SingletonDB.getInstance().getConnection().prepareStatement(sql);
 			selectStmt.setString(1, uname);
@@ -63,7 +64,9 @@ public class UserDAO {
 	
 		String sql = "select * from SubApplicationDetails "
 				+"where ApplicationID = ? "
-				+"AND UserID=(Select UserID from UserDetails where UserName=?)";
+				+ "AND GroupID IN "
+				+ "(Select GroupId from UserGroupDetails where "
+				+"UserID=(Select UserID from UserDetails where UserName=?))";
 		try {
 			pst = SingletonDB.getInstance().getConnection().prepareStatement(sql);
 			pst.setString(1, appId);
@@ -276,6 +279,78 @@ public class UserDAO {
 		return result;
 	}
 
+	public Map<String, String> getServerNames(int appId , int subAppId, String envName)
+	{
+		Map<String, String> serverNameMap = new HashMap<String, String>();
+				PreparedStatement ps = null;
+				ResultSet serverNames = null;
+				try {
+					 String sqlQuery = "Select ServerID, ServerName from ServerDetails where ApplicationID=? AND " 
+							 + "SubAppId = ? AND Enviornment = ?";
+						ps = SingletonDB.getInstance().getConnection().prepareStatement(sqlQuery);
+					
+					ps.setInt(1, appId);
+					ps.setInt(2, subAppId);
+					ps.setString(3, envName);
+					
+					serverNames = ps.executeQuery();
+					
+					while (serverNames.next()) {
+						
+						serverNameMap.put(serverNames.getString(1), serverNames.getString(2));
+						
+					}
+		 
+		
+				} catch (SQLException ex) {
+					 ex.printStackTrace();
+			       } finally {
+					try {
+						if (null != ps)
+							ps.close();						
+					} catch (Exception ex) {
+						ex.printStackTrace();
+					}
+				}
+
+		
+		return serverNameMap;
+	}
+	
+	public ArrayList<String> getLogPaths(int serverId)
+	{
+		ArrayList<String> logPathList = new ArrayList<String>();
+				PreparedStatement ps = null;
+				ResultSet logpaths = null;
+				try {
+					 String sqlQuery = "Select LogPath from LogPathDetails where ServerID=?";
+						ps = SingletonDB.getInstance().getConnection().prepareStatement(sqlQuery);
+					
+					ps.setInt(1, serverId);
+					
+					logpaths = ps.executeQuery();
+					
+					while (logpaths.next()) {
+						
+						logPathList.add(logpaths.getString(1));
+						
+					}
+		 
+		
+				} catch (SQLException ex) {
+					 ex.printStackTrace();
+			       } finally {
+					try {
+						if (null != ps)
+							ps.close();						
+					} catch (Exception ex) {
+						ex.printStackTrace();
+					}
+				}
+
+		
+		return logPathList;
+	}
 	
 
 }

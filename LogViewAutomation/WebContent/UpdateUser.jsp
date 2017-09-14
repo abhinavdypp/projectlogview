@@ -8,6 +8,18 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+
+<style>
+body { 
+    background-color: transparent;
+font-family:Arial;
+font-size: 12px;
+}
+ th {
+    background-color:#117ac8;
+    color: white;
+</style>
+
 <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
  <script src="Scripts/jquery-1.12.4.min.js"></script>
  <script type="text/javascript">
@@ -30,7 +42,7 @@ function EnableDisableTextBox(chkId,count) {
   function confimResponse()
 {
 if (confirm('Are you sure you want delete record?')) {
-getCheckedValues();
+getCheckedValues('delete');
 }
 else {
     document.getElementById('selectedids').value = "";
@@ -38,9 +50,8 @@ else {
 }
   }  
     
-function getCheckedValues()
+function getCheckedValues(action)
 {
-
 var table = document.getElementById("tbUserDetails");
 checkbox = table.getElementsByTagName("input"); 
 
@@ -53,7 +64,10 @@ for(var indexCheckbox = 0; indexCheckbox<checkbox.length; indexCheckbox++){
        selectedChkArrayIndex++;
         }
         document.getElementById('selectedids').value=chkedshid.join();
-    }   
+       
+    }  
+    
+      formSubmit(action);
 }
 
  
@@ -81,6 +95,7 @@ function validateForm() {
        document.getElementById("errorMsg").innerHTML = "Please select status";
         return false;
     }
+    return true;
     }
     }
 
@@ -88,31 +103,67 @@ function validateForm() {
  {
  window.location.href = pageURL;
  }
+/*function formSubmit(){
+ alert(' Action completed succssfully');
+ 
+	return true;
+	}*/
+	
+
+function formSubmit(action){
+if(action == 'update')
+{
+var submitData = $('#frmUserDetails').serialize();
+                var btnName = $('#update').attr('name');
+                var btnVal = $('#update').val();
+                var btn = '&'+btnName+'='+btnVal ;
+                 submitData = submitData + btn;
+                 alert(submitData);
+}	
+if(action =='delete')
+{
+  var submitData = $('#frmUserDetails').serialize();
+                var btnName = $('#delete').attr('name');
+                var btnVal = $('#delete').val();
+                var btn = '&'+btnName+'='+btnVal ;
+                 submitData = submitData + btn;
+                 alert(submitData);
+}
+ 
+ $.ajax({
+ 	type:'POST',
+     url:"AdminController?action=Update",
+     	
+     data: submitData,
+     success: function (data) {
+		//  $('#result').html(data);
+							alert(' Data Saved succssfully');	
+							parent.UpdateUser();						
+						},
+	 error: function(jqXHR,error, errorThrown) {
+					
+						alert ('Unexpected error occured! Please try again');
+						//parent.UpdateUser();
+					}
+					});
+		}
+
 
 </script>
  
 <title>Update User</title>
 </head>
-<body background="http://piranahimpressions.com/img/seq-slider/bg-clouds.jpg" link="black" alink="black" vlink="black">
-<div >
-<table border=0 style="position:absolute; top:0px;">
-<tbody>
-	<tr>
-		<td width="150" height="80"><img src="http://www.bitpad.com/.a/6a00d834202e5653ef0133f0e26640970b-pi" width="120" height="80"></td>
-		<td align="center" width="1050" height="80" style="font-size:36px; color:#d50e21";><b>LogView Application</b></td>
-		<td width="150" height="100"><img src="https://fontmeme.com/images/IBM-Logo.jpg" width="120" height="100"></td></b>
-	</tr>	
-</tbody></table></div>
-<div align="center" style="position:relative; top:100px;"><center>
+<body >
+<center>
 <b><h2>Accounts</h2></b>
 
-<div id="errorMsg" name="errorMsg" align="left" style="width: 450px; color:red; padding-top:4px; padding-left:130px; padding-bottom:10px;"> </div>
+<div id="errorMsg" name="errorMsg" align="left" style="width: 450px; color:red; padding-left:130px; padding-bottom:10px;"> </div>
 
 <form method="Post"  action="AddUser.jsp">
 <input type="submit" name="action" value="Add Account" style="height:30px;" >
  </form><br>
 
-<form method="POST" action="AdminController?action=Update" id="frmUserDetails" onsubmit="return validateForm()">
+<form method="POST" action="" name="UserDetails" id="frmUserDetails" onsubmit="return validateForm()">
 <table border="1" id="tbUserDetails">
             <thead>
                 <tr>
@@ -185,25 +236,18 @@ function validateForm() {
             </tbody>
         </table>    
 				
-      <br> <br> <input type="submit" name="delete"  id="delete" style="height:30px;"
+      <br> <input type="submit" name="delete"  id="delete" style="height:30px;"
 					value="Delete Selected records" onclick="confimResponse()">
 					
-					<input type="submit" name="update"  id="update" style="height:30px;"
-					value="Update Selected records" onclick="getCheckedValues()">
-					
-					<input type="button" name="Cancel"  id="Cancel" style="height:30px;"
-					value="Cancel" onclick="openPage('AdminHome.jsp')">
+					<input type="button" name="update"  id="update" style="height:30px;"
+					value="Update Selected records" onclick="getCheckedValues('update')">
 					
 				   <input type="hidden" id="selectedids"  name = "selectedids"  value=""/>
+<!-- 				   <input type="submit" name="update" id="update" style="width:150px;" -->
+<!-- 					value="Update Selected records" onclick="getCheckedValues()"> -->
         
         </form>
 </center>
 </div>
-<% Date today = new Date(); %>
-<%SimpleDateFormat Date_format= new SimpleDateFormat("yyyy/MM/dd-HH:mm:ss");
-			String timeStamp= Date_format.format(today);
- 			%>
- 			
-<div style="font-size:20px; color:Black; position:absolute; bottom: 10px; right:0; text-align:right "><b><%=timeStamp %></b></div>
 </body>
 </html>

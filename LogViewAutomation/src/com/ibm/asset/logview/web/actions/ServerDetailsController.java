@@ -79,7 +79,9 @@ public class ServerDetailsController extends HttpServlet {
 	
 	protected void doPost(HttpServletRequest request,
 			HttpServletResponse response) throws IOException, ServletException {
+			try{
 			String action = request.getParameter("action");
+			System.out.println("Server Details Controller :: " + action);
 		if (action!= null &&  action.equalsIgnoreCase("Add")) {
 			String servername = request.getParameter("servername");
 			String ipaddress = request.getParameter("ipaddress");
@@ -87,6 +89,9 @@ public class ServerDetailsController extends HttpServlet {
 			String app_id = request.getParameter("appNameList");
 			String sub_app_id = request.getParameter("subAppNameList");
 			String logPathCount = request.getParameter("countForLogpath");
+			String serverLoginId = request.getParameter("loginid"); 
+			String serverLoginPwd = request.getParameter("serverpass");
+			String fileName = request.getParameter("fileName");
 			System.out.println("logpath count  ***** " + logPathCount);
 			List<String> logpaths = new ArrayList<String>();
 			for (int i= 1 ; i <= Integer.parseInt(logPathCount) ; i++)
@@ -98,7 +103,7 @@ public class ServerDetailsController extends HttpServlet {
 			System.out.println("logpaths size " + logpaths.size() + " value at s=zero " + logpaths.get(0));
 			ManageDAO dao = new ManageDAO();
 			int serverID = dao.addNewServerDetails(servername, ipaddress, environment,
-					Integer.parseInt(app_id), Integer.parseInt(sub_app_id));
+					Integer.parseInt(app_id), Integer.parseInt(sub_app_id),serverLoginId,serverLoginPwd,fileName);
 			if (serverID > 0) {
 				if (dao.addNewLogPathDetails(serverID,  logpaths) == true) {
 					dao.commitTransaction();
@@ -113,11 +118,12 @@ public class ServerDetailsController extends HttpServlet {
 				  dao.rollBackTransaction();
 	 				System.out.println("Record insertion failed on Server Details tables!!!"); 		
 			}
-			RequestDispatcher rd = getServletContext().getRequestDispatcher(
-					"/AdminHome.jsp");
-			rd.forward(request, response);
+			//RequestDispatcher rd = getServletContext().getRequestDispatcher(
+			//		"/AdminHome.jsp");
+			//rd.forward(request, response);
 
 		} else if (null != action && action.equalsIgnoreCase("modifyRcords")) {
+			System.out.println("In modify records ");
 			if (null != request.getParameter("update")) {
 				ArrayList<ServerData> lstServerToUpdate = new ArrayList<ServerData>();
 				System.out.println("update/save values "
@@ -153,9 +159,9 @@ public class ServerDetailsController extends HttpServlet {
 
 				ManageDAO dao = new ManageDAO();
 				dao.updateServerDetails(lstServerToUpdate);
-				RequestDispatcher rd = getServletContext()
-						.getRequestDispatcher("/AdminHome.jsp");
-				rd.forward(request, response);
+				//RequestDispatcher rd = getServletContext()
+				//		.getRequestDispatcher("/AdminHome.jsp");
+				//rd.forward(request, response);
 			} else if (null != request.getParameter("delete")) {
 
 				String selectedRecords = request.getParameter("selectedids");
@@ -169,9 +175,9 @@ public class ServerDetailsController extends HttpServlet {
 					ManageDAO dao = new ManageDAO();
 					dao.deleteServerDetails(recordids);
 				}
-				RequestDispatcher rd = getServletContext()
-						.getRequestDispatcher("/AdminHome.jsp");
-				rd.forward(request, response);
+			//	RequestDispatcher rd = getServletContext()
+			//			.getRequestDispatcher("/AdminHome.jsp");
+			//	rd.forward(request, response);
 			}
 		}
 		else if (null != action && action.equalsIgnoreCase("Save")){
@@ -192,7 +198,7 @@ public class ServerDetailsController extends HttpServlet {
 					ManageDAO dao = new ManageDAO();
 					int recordCount = dao.deleteLogPathDetails(Integer
 							.parseInt(serverId));
-					if (recordCount > 0) {
+					if (recordCount > -1) {
 						if (dao.addNewLogPathDetails(
 								Integer.parseInt(serverId), logpaths) == true) {
 							dao.commitTransaction();
@@ -215,5 +221,12 @@ public class ServerDetailsController extends HttpServlet {
 			
 			//rd.forward(request, response);
 		} 
-	}
+			}
+			catch(Exception e )
+			{
+				System.out.println("Server Details Controller :: Exception occured " + e.getMessage());
+				response.setStatus(400);
+				 response.getWriter().write(e.getMessage());
+			}
+	}//end of doPost
 }

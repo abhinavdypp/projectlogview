@@ -8,6 +8,11 @@
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <style type="text/css">
 
+body { 
+    background-color: transparent;
+}
+
+
 table#tbServerDetails tr:nth-child(even) {
     background-color: #eee;
 }
@@ -19,10 +24,14 @@ table#tbServerDetails tr:nth-child(odd) {
 }*/
 
 table#tbServerDetails th {
-    background-color: black;
+    background-color:#117ac8;
     color: white;
 }
-
+body
+{
+font-family:Arial;
+font-size: 12px;
+}
 
 </style>
 <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
@@ -77,10 +86,10 @@ function EnableDisableTextBox(chkId,count) {
         selSubAppNameList.disabled = chkId.checked ? false : true;
     }
 
-function confimResponse()
+function confimResponse(action)
 {
 if (confirm('Are you sure you want delete record?')) {
-getCheckedValues();
+getCheckedValues('delete');
 }
 else {
     document.getElementById('selectedids').value = "";
@@ -89,7 +98,7 @@ else {
 
 }
 
-function getCheckedValues()
+function getCheckedValues(action)
 {
 //if (confirm('Are you sure you want delete record?')) {
     
@@ -105,6 +114,8 @@ for(var indexCheckbox = 0; indexCheckbox<checkbox.length; indexCheckbox++){
     }
     	document.getElementById('selectedids').value=chkedshid.join();
 	} 
+    formSubmit(action);	
+	
 //}
 
  
@@ -167,7 +178,7 @@ function validateForm() {
        
         return false;
     }
-     
+    return true; 
    
     }
     }
@@ -187,31 +198,69 @@ alert(serverId);
     "Logpath"
    );
  }
+ /*function formSubmit(){
+ alert(' Action completed succssfully');
+	return true;
+	}*/
+	
+	function formSubmit(action){
+	alert('formsubmit');
+	var submitData = $('#frmServerDetails').serialize();
+if(action == 'update')
+{
+ submitData = $('#frmServerDetails').serialize();
+                var btnName = $('#update').attr('name');
+                var btnVal = $('#update').val();
+                var btn = '&'+btnName+'='+btnVal ;
+                 submitData = submitData + btn;
+              //   alert(submitData);
+}	
+if(action =='delete')
+{
+   submitData = $('#frmServerDetails').serialize();
+                var btnName = $('#delete').attr('name');
+                var btnVal = $('#delete').val();
+                var btn = '&'+btnName+'='+btnVal ;
+                 submitData = submitData + btn;
+                // alert(submitData);
+}
+	
+	 $.ajax({
+ 	type:'POST',
+     url:"ServerDetailsController?action=modifyRcords",
+     	
+     data: submitData,
+     success: function (data) {
+		//  $('#result').html(data);
+							alert(' Data Saved succssfully');	
+							parent.EditServerDetails();						
+						},
+	 error: function(jqXHR,error, errorThrown) {
+					
+						alert ('Unexpected error occured! Please try again');
+						//parent.UpdateUser();
+					}
+					});
+		
+	
+}	
+	
+	
 </script>
 
 <title>Insert title here</title>
 </head>
 
 
-<div>
-<table border=0 style="position:absolute; top:0px;">
-<tbody>
-	<tr>
-		<td width="150" height="80"><img src="http://www.bitpad.com/.a/6a00d834202e5653ef0133f0e26640970b-pi" width="120" height="80"></td>
-		<td align="center" width="10500" height="80" style="font-size:36px; color:#d50e21";><b>LogView Application</b></td>
-		<td width="150" height="100"><img src="https://fontmeme.com/images/IBM-Logo.jpg" width="120" height="100"></td></b>
-	</tr>	
-</tbody></table></div>
-
-<body  background="http://piranahimpressions.com/img/seq-slider/bg-clouds.jpg" link="black" alink="black" vlink="black">
+<body >
 <center>
 
-					<h2 style="margin-top:90px;"> Server Details</h2>
-	<form method="POST" action="ServerDetailsController?action=modifyRcords" id="frmServerDetails" onsubmit="return validateForm()">
-<div style="width: 729px;  padding-top:0px;">  Select the row which you want to change or delete </div>
+					<h2 > Server Details</h2>
+	<form method="POST" action="" id="frmServerDetails" onsubmit="return validateForm()">
+<!-- <div style="width: 729px;  padding-top:0px;">  Select the row which you want to change or delete </div> -->
 <div id="errorMsg" name="errorMsg" align="left" style="width: 450px; color:red; padding-top:4px; padding-left:130px; padding-bottom:10px;"> </div>
 
-<table id="tbServerDetails" style="border-spacing:0px;  border-collapse: collapse; border: 2px solid black;" >
+<table id="tbServerDetails" border="1">
 
             <thead>
                 <tr>
@@ -329,14 +378,12 @@ alert(serverId);
             </tbody>
         </table>
         
-         <br> <br> <input type="submit" name="delete"  id="delete" style="height:30px;"
-					value="Delete Selected records" onclick="confimResponse()">
+         <br> <br> <input type="button" name="delete"  id="delete" style="height:30px;"
+					value="Delete Selected records" onclick="confimResponse('delete')">
 					
-					<input type="submit" name="update"  id="update" style="height:30px;"
-					value="Update Selected records" onclick="getCheckedValues()">
+					<input type="button" name="update"  id="update" style="height:30px;"
+					value="Update Selected records" onclick="getCheckedValues('update')">
 					
-					<input type="button" name="Cancel"  id="Cancel" style="height:30px;"
-					value="Cancel" onclick="openPage('AdminHome.jsp')">
 					
 				   <input type="hidden" id="selectedids"  name = "selectedids"  value=""/>
 				    <input type="hidden" id="serverIdForLogpath"  name = "serverIdForLogpath"  value=""/>

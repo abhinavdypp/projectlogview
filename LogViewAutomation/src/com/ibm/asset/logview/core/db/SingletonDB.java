@@ -6,7 +6,7 @@ public class SingletonDB {
 
     private static SingletonDB dbIsntance;
  //   private static Connection con ;
-	String url="jdbc:odbc:mydsn";
+	String url="jdbc:odbc:myworkingdsn";
 	String driverClassName = "sun.jdbc.odbc.JdbcOdbcDriver";
 	
 	
