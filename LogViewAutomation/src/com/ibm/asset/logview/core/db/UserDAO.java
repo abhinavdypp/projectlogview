@@ -352,5 +352,47 @@ public class UserDAO {
 		return logPathList;
 	}
 	
+	public ArrayList<String> getfileNameByServerIDAndEnvironment(String serverID , String environment)
+	{
+		ArrayList<String> fileNames = new ArrayList<String>();
+				PreparedStatement ps = null;
+				ResultSet logFileName = null;
+				try {
+					 String sqlQuery = "SELECT LogFileName, IpAddress, ServerLoginId, ServerLoginPwd FROM ServerDetails where ServerID= ? AND Enviornment= ? ";
+						ps = SingletonDB.getInstance().getConnection().prepareStatement(sqlQuery);
+					
+					ps.setInt(1, Integer.parseInt(serverID));
+					ps.setString(2, environment);
+					
+					
+					logFileName = ps.executeQuery();
+					
+					while (logFileName.next()) {
+						
+						fileNames.add(logFileName.getString(1));
+						fileNames.add(logFileName.getString(2));
+						fileNames.add(logFileName.getString(3));
+						fileNames.add(logFileName.getString(4));
+						
+						
+					}
+		 
+		
+				} catch (SQLException ex) {
+					 ex.printStackTrace();
+			       } finally {
+					try {
+						if (null != ps)
+							ps.close();						
+					} catch (Exception ex) {
+						ex.printStackTrace();
+					}
+				}
+
+		
+		return fileNames;
+	}
+	
 
 }
+ 

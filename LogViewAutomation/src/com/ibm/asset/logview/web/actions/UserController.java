@@ -17,6 +17,7 @@ import javax.xml.bind.ParseConversionEvent;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
+import com.ibm.asset.logview.core.data.ServerData;
 import com.ibm.asset.logview.core.db.ManageDAO;
 import com.ibm.asset.logview.core.db.UserDAO;
 
@@ -193,7 +194,7 @@ public class UserController extends HttpServlet {
 				HttpServletResponse response) throws IOException, ServletException {
 			
 //			String action = request.getParameter("action");
-			UserDAO uDAO = new UserDAO();
+			//UserDAO uDAO = new UserDAO();
 			ManageDAO mDao = new ManageDAO();
 			String action = request.getParameter("action");
 				if (action!=null && action.equals("Search")) {
@@ -213,8 +214,20 @@ public class UserController extends HttpServlet {
 					System.out.println(sub_app_id + " env : " +  envName + " server name "+ serverName + " logpath "  +logpath);
 					
 			        	
-					ArrayList<String> logs=new ArrayList<String>();
-					logs =uDAO.getLogpath(environment,Integer.parseInt(app_id),sub_app_id);
+					//ArrayList<String> logs=new ArrayList<String>();
+					//logs =uDAO.getLogpath(environment,Integer.parseInt(app_id),sub_app_id);
+					ServerData serverData = new ServerData();
+					//serverData.setLogpathlist(logs);
+					serverData.setServername(serverName);
+					serverData.setEnviornment(envName);
+					serverData.setApplication_id(Integer.parseInt(app_id));
+					serverData.setLogpath(logpath);
+					serverData.setSub_app_id(Integer.parseInt(sub_app_id));
+					request.setAttribute("serverData", serverData);
+					
+					RequestDispatcher dispatcher = request.getRequestDispatcher("/LogSearchCriteriaController");
+					dispatcher.forward(request,response);
+				
 //					Gson gson= new Gson();
 //					JsonElement element= gson.toJsonTree(logs, new TypeToken<List<String>>(){}.getType());
 //					

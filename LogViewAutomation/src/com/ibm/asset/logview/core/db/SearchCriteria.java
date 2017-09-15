@@ -7,24 +7,25 @@ import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
 import com.jcraft.jsch.UserInfo;
-
+/**
+ * Created on Sep 11, 2017
+ * <p>
+ * Description: SearchCriteria is used to get log details from specified server and user can search based on 
+ * time and text value.
+ * 
+ * Author :Abhinav Jaiswal
+ */
 public class SearchCriteria {
 
-	/**
-	 * Created on Sep 11, 2017
-	 * <p>
-	 * Description: SearchCriteria is used to get log details from specified server and user can search based on 
-	 * time and text value.
-	 * 
-	 * Author :Abhinav Jaiswal
-	 */
 	
-public String getLogDetail(String host, String user, int port, String command) {
+		private static String serverPassword; 
+    
+public String getLogDetail(String host, String user, int port, String command, String password) {
 		
         JSch jsch=new JSch(); 
         String outputLog = null;        
- 		
-	    try{
+        serverPassword =password;
+ 		try{
 	    	
 	        System.out.println("user : "+ user + " host : "+host + " port : "+port + " command : "+command);
 	        
@@ -70,8 +71,7 @@ public String getLogDetail(String host, String user, int port, String command) {
 	}
 	
 	public static String getServerPassword() {
-		String password = null;
-		password = "Archana0817";//"NewPwd123";//"Archana0617";		
+		String password = serverPassword;		
 		return password;
 	}	
 	

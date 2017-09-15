@@ -94,29 +94,22 @@ $(document).ready(function () {
 <style>
 </style>
 
-<body
-	background="http://piranahimpressions.com/img/seq-slider/bg-clouds.jpg"
-	link="black" alink="black" vlink="black">
+<body background="http://labcenter.com.br/wp-content/uploads/2016/08/gradiente-azul-claro-fundo-1024x768.jpg" link="black" alink="black" vlink="black">
 
-<div style="top: 0">
-<table border=0>
-	<tbody>
-		<tr>
-			<td width="150" height="80"><img
-				src="http://www.bitpad.com/.a/6a00d834202e5653ef0133f0e26640970b-pi"
-				width="120" height="80"></td>
-			<td align="center" width="10500" height="80"
-				style="font-size: 36px; color: #d50e21";><b>LogView
-			Application</b></td>
-			<td width="150" height="80"><img
-				src="https://fontmeme.com/images/IBM-Logo.jpg" width="120"
-				height="100"></td>
-			</b>
-		</tr>
-	</tbody>
-</table>
-</div>
+<center>
 
+
+<div>
+<table border=0 style="position:absolute; top:0px;">
+<tbody>
+	<tr>
+		<td width="150" height="70"><img src="http://i2mag.com/wp-content/uploads/2012/01/IBM.jpg" width="120" height="40"></td></b>
+		<td align="center" width="1570" height="80" style="font-size:36px; color:#0c69c2; text-shadow: 2px 2px 4px #8ec9db;"><b>LogView Application</b></td>
+		
+	</tr>	
+	
+</tbody></table></div><br><br><br><br><br><br><br>
+</center>
 
 
 <center>
