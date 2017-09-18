@@ -1,6 +1,9 @@
 package com.ibm.asset.logview.core.db;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelExec;
@@ -41,17 +44,10 @@ public String getLogDetail(String host, String user, int port, String command, S
 	        InputStream in=channel.getInputStream();	   
 	        channel.connect();
 	   
-	        byte[] tmp=new byte[10240];
- 
+	        
 	        while(true){
 	        	System.out.println("inside first while");
-	          while(in.available()>0){
-	        	System.out.println("inside while in available");
-	            int i=in.read(tmp, 0, 10240);
-	            if(i<0)break;
-	            outputLog = new String(tmp, 0, i);
-	            System.out.println("outputLog :"+outputLog.toString());
-	          }
+	        	outputLog = readResponse(in);
 	          if(channel.isClosed()){
 	        	System.out.println("Inside close channel");
 	            System.out.println("exit-status: "+channel.getExitStatus());
@@ -69,6 +65,33 @@ public String getLogDetail(String host, String user, int port, String command, S
 
 		return outputLog;
 	}
+private String readResponse(InputStream is){
+	BufferedReader br = null;
+	StringBuilder sb = new StringBuilder();
+
+	String line;
+	try {
+
+		br = new BufferedReader(new InputStreamReader(is));
+		while ((line = br.readLine()) != null) {
+			System.out.println("inside while in available");
+            sb.append(line);
+		}
+
+	} catch (IOException e) {
+		e.printStackTrace();
+	} finally {
+		if (br != null) {
+			try {
+				br.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+    System.out.println("outputLog :"+sb.toString());
+    return sb.toString();
+}
 	
 	public static String getServerPassword() {
 		String password = serverPassword;		

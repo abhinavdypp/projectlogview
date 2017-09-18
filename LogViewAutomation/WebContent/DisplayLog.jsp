@@ -76,7 +76,7 @@ $(document).ready(function () {
  
  function validateFields(form){
  	var fromDateField = document.getElementById("fromDate").value;
-    if (fromDateField.match(/^(?:(19|20)[0-9]{2}[\- \/.](0[1-9]|1[012])[\- \/.](0[1-9]|[12][0-9]|3[01]))$/)){
+    if (fromDateField.length == 0 || fromDateField == "" || fromDateField.match(/^(?:(19|20)[0-9]{2}[\- \/.](0[1-9]|1[012])[\- \/.](0[1-9]|[12][0-9]|3[01]))$/)){
     	return true;
   	}else{
   		document.getElementById("error").innerHTML="*Enter date format in yyyy-MM-dd*";
@@ -84,7 +84,7 @@ $(document).ready(function () {
   	}
   }
 	function cancelForm() {
-	    var callAdmin = "AdminHome.jsp";
+	    var callAdmin = "Checklog.jsp";
    		window.location.href = callAdmin;
 	} 
           
