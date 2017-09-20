@@ -8,9 +8,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
+import com.ibm.asset.logview.web.actions.UserController;
+
 
 
 public class UserDAO {
+	
+	static Logger log = Logger.getLogger(UserDAO.class);
 	
 	public Map<String, String> getUserApplications(String uname) {
 		Map<String, String> appNamesMap = null;
@@ -32,12 +38,12 @@ public class UserDAO {
 				int id = rs.getInt(1);
 				 String appName=rs.getString(2);
 				 appNamesMap.put(String.valueOf(id), appName);
-				 System.out.println("ID  : "+id);
+				 log.debug("ID  : "+id);
 				
 			}
 
 		} catch (SQLException e) {
-			System.out.println("Error while getting application names for userID");
+			log.debug("Error while getting application names for userID");
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally {
@@ -79,7 +85,7 @@ public class UserDAO {
 			}
 			
 		} catch (SQLException e) {
-			System.out.println("Error while getting  sub application names for userID");
+			log.debug("Error while getting  sub application names for userID");
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally {
@@ -180,15 +186,15 @@ public class UserDAO {
 					"(Select ServerID from ServerDetails where Enviornment=? AND ApplicationID=? AND SubAppID=?) ";
 			
 			ps = SingletonDB.getInstance().getConnection().prepareStatement(LogpathQuery);
-			System.out.println("hi 1");
+			
 			
 			ps.setString(1, environment);
 			ps.setInt(2, appId);
 			ps.setString(3, sub_app_id);
 
-			System.out.println("hi 2");
+			
     		logpath=ps.executeQuery();
-    		System.out.println("hi 3");
+    	
     		logs = new ArrayList<String>();
     		
     		while (logpath.next()) {
@@ -196,7 +202,7 @@ public class UserDAO {
 				logs.add(logpath.getString(1));
 				
 			}
-			System.out.println("hi 4");
+			
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -217,13 +223,13 @@ public class UserDAO {
 
 			if (null != SingletonDB.getInstance().getConnection())			
 			    SingletonDB.getInstance().getConnection().commit();
-				System.out.println("Transactions commited.");
-			 
+				log.debug("Transactions commited.");
+			
 				} catch (SQLException ex) {
 					 ex.printStackTrace();
 			    }finally {
 					try {
-						    System.out.println("Closing connection.");
+						log.debug("Closing connection.");
 						if (null != SingletonDB.getInstance().getConnection())
 							SingletonDB.getInstance().getConnection().close();
 					} catch (Exception ex) {
@@ -239,7 +245,7 @@ public class UserDAO {
 
 			if (null != SingletonDB.getInstance().getConnection())			
 			SingletonDB.getInstance().getConnection().rollback();
-			System.out.println("Transactions rolled back!");
+			log.debug("Transactions rolled back!");
 			
 				} catch (SQLException ex) {
 					 ex.printStackTrace();
@@ -261,7 +267,7 @@ public class UserDAO {
 			{
 				
 				result = rs.getInt(1);
-				System.out.println("max value " + result);
+				log.debug("max value " + result);
 			}
 			
 		} catch (SQLException e) {

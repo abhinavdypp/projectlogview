@@ -13,6 +13,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
+
 import com.ibm.asset.logview.core.data.ServerData;
 import com.ibm.asset.logview.core.db.SearchCriteria;
 import com.ibm.asset.logview.core.db.UserDAO;
@@ -27,6 +29,7 @@ import com.ibm.asset.logview.core.db.UserDAO;
  */
 public class LogSearchCriteriaController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+	static Logger log = Logger.getLogger(LogSearchCriteriaController.class);
 
 	/**
 	 * @see HttpServlet#HttpServlet()
@@ -105,7 +108,7 @@ public class LogSearchCriteriaController extends HttpServlet {
 		}
 		try {
 
-			System.out.println(" inside doGet SearchCriteria class");
+			log.debug(" inside doGet SearchCriteria class");
 			String logInfo = new SearchCriteria().getLogDetail(host, user,
 					port, command, fileNameList.get(3));
 

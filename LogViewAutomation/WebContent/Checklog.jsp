@@ -64,7 +64,7 @@ $('#appNameList').click(function(event) {
          });
       
          
-   $('#subAppNameList').change(function(event) {
+   $('#subAppNameList').click(function(event) {
         var snames = $("select#subAppNameList").val();
         $.get('UserController?action=getsubappEnvironment', {
                 subAppname : snames

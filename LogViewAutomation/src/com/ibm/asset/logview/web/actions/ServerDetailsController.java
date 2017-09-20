@@ -14,6 +14,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
+
 import com.ibm.asset.logview.core.data.ServerData;
 import com.ibm.asset.logview.core.db.ManageDAO;
 
@@ -27,10 +29,10 @@ import net.sf.json.JSONObject;
 
 
 public class ServerDetailsController extends HttpServlet {
-	
+	static Logger log = Logger.getLogger(ServerDetailsController.class);
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws IOException, ServletException {
-		System.out.println("calling doget" + request.getParameter("appName"));
+		log.debug("calling doget" + request.getParameter("appName"));
 		ManageDAO mDAO = new ManageDAO();
 
 		String action = request.getParameter("action");
@@ -47,7 +49,7 @@ public class ServerDetailsController extends HttpServlet {
 		else if(action.equalsIgnoreCase("getSubApps")) 
 		{
 			if (null != request.getParameter("appName").toString()) {
-				System.out.println("getting sub app details");
+				log.debug("getting sub app details");
 
 				JSONObject responseDetailsJson = new JSONObject();
 				responseDetailsJson.accumulateAll(mDAO.getSubAppNames(request
@@ -58,7 +60,7 @@ public class ServerDetailsController extends HttpServlet {
 		}
 		else if(action.equalsIgnoreCase("updateServerDetails")) 
  {
-			System.out.println("In updateServerDetails ");
+			log.debug("In updateServerDetails ");
 			HttpSession session = request.getSession(true);
 			ManageDAO dao = new ManageDAO();
 			ArrayList<ServerData> servers = dao.getServerDetails();
@@ -67,7 +69,7 @@ public class ServerDetailsController extends HttpServlet {
 			appNamesMap = mDAO.getAllAppNames();
 			session.setAttribute("serverlist", servers);
 			session.setAttribute("appnames", appNamesMap);
-			System.out.println("addes session vars");
+			log.debug("addes session vars");
 			RequestDispatcher rd = getServletContext().getRequestDispatcher(
 					"/EditServerDetails.jsp");
 			rd.forward(request, response);
@@ -81,7 +83,7 @@ public class ServerDetailsController extends HttpServlet {
 			HttpServletResponse response) throws IOException, ServletException {
 			try{
 			String action = request.getParameter("action");
-			System.out.println("Server Details Controller :: " + action);
+			log.debug("Server Details Controller :: " + action);
 		if (action!= null &&  action.equalsIgnoreCase("Add")) {
 			String servername = request.getParameter("servername");
 			String ipaddress = request.getParameter("ipaddress");
@@ -92,15 +94,15 @@ public class ServerDetailsController extends HttpServlet {
 			String serverLoginId = request.getParameter("loginid"); 
 			String serverLoginPwd = request.getParameter("serverpass");
 			String fileName = request.getParameter("fileName");
-			System.out.println("logpath count  ***** " + logPathCount);
+			log.debug("logpath count  ***** " + logPathCount);
 			List<String> logpaths = new ArrayList<String>();
 			for (int i= 1 ; i <= Integer.parseInt(logPathCount) ; i++)
 			{
-				System.out.println("adding logpath ");
+				log.debug("adding logpath ");
 				logpaths.add(request.getParameter("logpath" + i));
 				
 			}
-			System.out.println("logpaths size " + logpaths.size() + " value at s=zero " + logpaths.get(0));
+			log.debug("logpaths size " + logpaths.size() + " value at s=zero " + logpaths.get(0));
 			ManageDAO dao = new ManageDAO();
 			int serverID = dao.addNewServerDetails(servername, ipaddress, environment,
 					Integer.parseInt(app_id), Integer.parseInt(sub_app_id),serverLoginId,serverLoginPwd,fileName);
@@ -110,23 +112,23 @@ public class ServerDetailsController extends HttpServlet {
 					dao.closeConnection();
 				} else {
 					dao.rollBackTransaction();
-					System.out.println("Record insertion failed on logpath tables!!!"); 	
+					log.debug("Record insertion failed on logpath tables!!!"); 	
 				}
 			}
 			else
 			{
 				  dao.rollBackTransaction();
-	 				System.out.println("Record insertion failed on Server Details tables!!!"); 		
+				  log.debug("Record insertion failed on Server Details tables!!!"); 		
 			}
 			//RequestDispatcher rd = getServletContext().getRequestDispatcher(
 			//		"/AdminHome.jsp");
 			//rd.forward(request, response);
 
 		} else if (null != action && action.equalsIgnoreCase("modifyRcords")) {
-			System.out.println("In modify records ");
+			log.debug("In modify records ");
 			if (null != request.getParameter("update")) {
 				ArrayList<ServerData> lstServerToUpdate = new ArrayList<ServerData>();
-				System.out.println("update/save values "
+				log.debug("update/save values "
 						+ request.getParameter("selectedids"));
 				String selectedRecordsForUpdate = request
 						.getParameter("selectedids");
@@ -181,14 +183,14 @@ public class ServerDetailsController extends HttpServlet {
 			}
 		}
 		else if (null != action && action.equalsIgnoreCase("Save")){
-			System.out.println(" *** saving logpatsh ***");
+			log.debug(" *** saving logpatsh ***");
 			String serverId = request.getParameter("serverId");
 			if (null != serverId) {
 				String logPathCount = request
 						.getParameter("countForNewLogpath");
 				List<String> logpaths = new ArrayList<String>();
 				for (int i = 1; i <= Integer.parseInt(logPathCount); i++) {
-					System.out.println("adding logpath ");
+					log.debug("adding logpath ");
 					String inputtedLopPath = request.getParameter("logpath" + i);
 					if(inputtedLopPath!= null && !inputtedLopPath.isEmpty())
 							logpaths.add(inputtedLopPath);
@@ -205,13 +207,11 @@ public class ServerDetailsController extends HttpServlet {
 							dao.closeConnection();
 						} else {
 							dao.rollBackTransaction();
-							System.out
-									.println("Record insertion failed on logpath tables!!!");
+							log.debug("Record insertion failed on logpath tables!!!");
 						}
 					} else {
 						dao.rollBackTransaction();
-						System.out
-								.println("Record deletion failed on logpath Details tables!!!");
+						log.debug("Record deletion failed on logpath Details tables!!!");
 					}
 				}
 			}
@@ -224,7 +224,7 @@ public class ServerDetailsController extends HttpServlet {
 			}
 			catch(Exception e )
 			{
-				System.out.println("Server Details Controller :: Exception occured " + e.getMessage());
+				log.debug("Server Details Controller :: Exception occured " + e.getMessage());
 				response.setStatus(400);
 				 response.getWriter().write(e.getMessage());
 			}

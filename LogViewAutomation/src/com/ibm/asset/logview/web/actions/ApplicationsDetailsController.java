@@ -11,6 +11,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
+
 import com.ibm.asset.logview.core.data.ApplicationBean;
 import com.ibm.asset.logview.core.data.SubApplicationBean;
 import com.ibm.asset.logview.core.db.ManageDAO;
@@ -20,27 +22,27 @@ import com.ibm.asset.logview.core.db.ManageDAO;
  * Servlet implementation class ApplicationsDetailsController
  */
 public class ApplicationsDetailsController extends HttpServlet {
-	
+	static Logger log = Logger.getLogger(ApplicationsDetailsController.class);
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		
-	System.out.println("calling doget" + request.getParameter("appName"));
+		log.debug("calling doget" + request.getParameter("appName"));
 	ManageDAO mDAO = new ManageDAO();
 		
     String action = request.getParameter("action");
     
-    System.out.println("action  +"+action);
+    log.debug("action  +"+action);
     	
    	 if(action.equalsIgnoreCase("deleteAppDetails")) 
    	 {
 
- 	    System.out.println("inside get app deleteAppDetails summary"); 		 
+   		log.debug("inside get app deleteAppDetails summary"); 		 
    		 
-   		        System.out.println("In deleteAppDetails");
+   		log.debug("In deleteAppDetails");
    				HttpSession session = request.getSession(true);
    				ManageDAO dao = new ManageDAO();
    				ArrayList<ApplicationBean> apps = dao.getApplicationDetails();
    				
-  				System.out.println("apps list size : " +apps.size());
+   				log.debug("apps list size : " +apps.size());
 
    				session.setAttribute("appslist", apps);
       			RequestDispatcher rd = request.getRequestDispatcher("/ApplicationSummary.jsp");
@@ -48,22 +50,38 @@ public class ApplicationsDetailsController extends HttpServlet {
 
    			}else if(action.equalsIgnoreCase("deleteSubAppDetails")){
 
-   		        System.out.println("In deleteSubAppDetails");
+   				log.debug("In deleteSubAppDetails");
    				HttpSession session = request.getSession(true);
    				ManageDAO dao = new ManageDAO();
    				ArrayList<SubApplicationBean> sapps = dao.getSubApplicationDetails();
    				
-  				System.out.println("sapps list size : " +sapps.size());
+   				log.debug("sapps list size : " +sapps.size());
 
    				session.setAttribute("sappslist", sapps);
       			RequestDispatcher rd = request.getRequestDispatcher("/SubApplicationSummary.jsp");
 				rd.forward(request, response);
    				
    			}
-   			else{
+   			else if(action.equalsIgnoreCase("addSubAppDetails")){
+
+   		   		try {	
+
+   		   					log.debug("doGet > " + "Inside addSubAppDetails > getting Application and User details"); 	    
+   		   				    
+   		   				    HttpSession session = request.getSession(true);
+   		   			        session.setAttribute("appnames", mDAO.getAppDetails());   				    
+   		   			        session.setAttribute("groupnames", mDAO.getGroupDetails());
+   		   				    RequestDispatcher rd = getServletContext().getRequestDispatcher("/SubApplicationDetails.jsp");
+   		   				    rd.forward(request, response);
+   		   				    
+   		   			} catch (Exception e) {
+   		   				// TODO Auto-generated catch block
+   		   				e.printStackTrace();
+   		   			}	
+   		   }else{
 		
 		try {	
-			    System.out.println("inside get user details");	    
+			log.debug("inside get user details");	    
 			    HttpSession session = request.getSession(true);
 		        session.setAttribute("groupnames", mDAO.getGroupDetails());
 			   // RequestDispatcher rd = getServletContext().getRequestDispatcher("/ApplicationDetails.jsp");
@@ -80,10 +98,10 @@ public class ApplicationsDetailsController extends HttpServlet {
 	
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		
-		  System.out.println("I am into inserting application details -doPost..");		
+		log.debug("I am into inserting application details -doPost..");		
 
 			String action = request.getParameter("action");
-			System.out.println("action : "+action);
+			log.debug("action : "+action);
 
 	try 
 	 {
@@ -123,41 +141,61 @@ public class ApplicationsDetailsController extends HttpServlet {
 			//			.getRequestDispatcher("/AdminHome.jsp");
 			//	rd.forward(request, response);
 		    	
+		    }else if(action!= null &&  action.equalsIgnoreCase("addSubApp")){
+		    	
+				  log.trace("doPost > Inside addSubApp action");
+
+				  int appId = Integer.parseInt(request.getParameter("appNameList"));
+				  String subAppName = request.getParameter("subAppName");
+				  String groupId=request.getParameter("grpNameList");
+
+				  log.trace("doPost > app Id : "+appId);
+				  log.trace("doPost > subAppName : "+subAppName);
+				  log.trace("doPost > groupId : "+groupId);
+				  	  
+				  ManageDAO mDAO = new ManageDAO();
+				  
+					 Boolean addSubApp=mDAO.addSubApplicationDetails(subAppName, appId, groupId);			 
+  				     log.trace("doPost > appSubApp addition Status : "+addSubApp);
+					
+//		 			 RequestDispatcher rd = getServletContext().getRequestDispatcher("/AdminHome.jsp");
+//					 rd.forward(request, response);			  			  
+			  		    			    	
 		    }else if(action!= null &&  action.equalsIgnoreCase("Add")){
 
 			  String appName = request.getParameter("appName");
 			  String subAppName = request.getParameter("subAppName");
 			  String groupId=request.getParameter("grpNameList");
 
-			  System.out.println("app Name :"+appName);
-			  System.out.println("subAppName :"+subAppName);
-			  System.out.println("group Id :"+groupId);
+			  log.debug("app Name :"+appName);
+			  log.debug("subAppName :"+subAppName);
+			  log.debug("group Id :"+groupId);
 			  	  
 			  ManageDAO mDAO = new ManageDAO();
 			  
 				 int appId=mDAO.addApplicationDetails(appName);			 
-	 			 System.out.println("Got appId :"+appId);
-	 			 System.out.println(request.getParameter("addApplicationDetails done"));
+				 log.debug("Got appId :"+appId);
+				 log.debug(request.getParameter("addApplicationDetails done"));
 				
 	 			 if(appId>0){
 
 	 				 if(mDAO.addSubApplicationDetails(subAppName, appId, groupId)== true){
-			 			 System.out.println("addSubApplicationDetails done");
+	 					log.debug("addSubApplicationDetails done");
 	 					 
 			 			 if(mDAO.addUserApplicationDetails(groupId, appId )==true){
-			 				 System.out.println("addUserApplicationDetails done");
-			 				 System.out.println("Record insertion completed on APP, SUB APP, User APP tables!!!");		 				
+			 				log.debug("addUserApplicationDetails done");
+			 				log.debug("Record insertion completed on APP, SUB APP, User APP tables!!!");		 				
 			 				 mDAO.commitTransaction();
 			 				 mDAO.closeConnection();
 			 			 }else{
 			 				 mDAO.rollBackTransaction();
-			 				 System.out.println("Record insertion failed on User APP tables!!!");} 					 
+			 				log.debug("Record insertion failed on User APP tables!!!");} 					 
 	 				 }else{
 	 					 mDAO.rollBackTransaction();
-	 					 System.out.println("Record insertion failed on SUB APP, User APP tables!!!"); } 			 
+	 					log.debug("Record insertion failed on SUB APP, User APP tables!!!"); } 			 
 	 			 }else{
 				    mDAO.rollBackTransaction();
-		 				System.out.println("Record insertion failed on APP, SUB APP, User APP tables!!!"); 				 
+				    log.debug("Record insertion failed on APP, SUB APP, User APP tables!!!"); 				 
 	 			 }	
 				 
 	 		//	 RequestDispatcher rd = getServletContext().getRequestDispatcher("/AdminHome.jsp");

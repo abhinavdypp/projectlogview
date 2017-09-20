@@ -11,15 +11,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 import com.ibm.asset.logview.core.data.ApplicationBean;
 import com.ibm.asset.logview.core.data.ServerData;
 import com.ibm.asset.logview.core.data.SubApplicationBean;
 import com.ibm.asset.logview.core.data.User;
+import com.ibm.asset.logview.web.actions.UserController;
 
 
 
 public class ManageDAO {
-	
+	static Logger log = Logger.getLogger(ManageDAO.class);
 	// To retrieve user details from Login table which return Map object with user details	
 		public Map<String, String> getUserDetails()
 		{
@@ -37,7 +40,7 @@ public class ManageDAO {
 					 int id = rs.getInt("UserID");
 					 String userName=rs.getString("UserName");
 					 appNamesMap.put(String.valueOf(id), userName);
-					 System.out.println("ID  : "+id);				
+					 log.debug("ID  : "+id);				
 				 }
 			
 				} catch (SQLException ex) {
@@ -59,6 +62,46 @@ public class ManageDAO {
 		}	
 		
 		
+		
+		// To retrieve user details from Login table which return Map object with user details	
+		public Map<String, String> getAppDetails()
+		{
+			Map<String, String> appNamesMap = new HashMap<String, String>();
+			Statement selectStmt = null;
+			ResultSet rs = null;
+			 
+			try {
+				
+				 selectStmt = SingletonDB.getInstance().getConnection().createStatement();
+				 rs = selectStmt.executeQuery("select * from ApplicationDetails");
+
+				 while(rs.next())
+				 {
+					 int id = rs.getInt("ApplicationID");
+					 String appName=rs.getString("ApplicationName");
+					 appNamesMap.put(String.valueOf(id), appName);
+					 log.trace("getAppDetails > App ID  : "+id);					 
+				 }
+			
+				} catch (SQLException ex) {
+						 ex.printStackTrace();
+				} finally {
+						try {
+							if (null != rs)
+								rs.close();
+							if (null != selectStmt)
+								selectStmt.close();
+//							if (null != SingletonDB.getInstance().getConnection())
+//								SingletonDB.getInstance().getConnection().close();
+
+						} catch (Exception ex) {
+							ex.printStackTrace();
+						}
+					}		
+			return appNamesMap;
+		}	
+			
+		
 		//***** Update Last Login of user in Login table****
 				public Boolean LastLogin(String uname)
 				{
@@ -78,7 +121,7 @@ public class ManageDAO {
 							pst.setString(2, uname);
 							  
 							int rowCount = pst.executeUpdate();
-							System.out.println(rowCount);
+							log.debug(rowCount);
 							if(rowCount>0)
 								lastLogin = true;
 						 
@@ -123,7 +166,7 @@ public class ManageDAO {
 						users.add(data);
 					}
 				} catch (Exception e) {
-					System.out.println("Error while getting all user details");
+					log.debug("Error while getting all user details");
 					e.printStackTrace();
 				}finally {
 					try {
@@ -245,7 +288,7 @@ public class ManageDAO {
 				else
 					sql = sql + " or UserID = " + recordids[k];
 			}
-			System.out.println(sql);			
+			log.debug(sql);			
 					
 		try{
 			int record=SingletonDB.getInstance().getConnection().createStatement().executeUpdate(sql);
@@ -270,7 +313,7 @@ public class ManageDAO {
 			
 			 	int maxAppId= getMaximumValue("ApplicationDetails", "ApplicationId");
 			 	maxAppId ++;
-			    System.out.println("maxAppId : " + maxAppId);
+			 	log.debug("maxAppId : " + maxAppId);
 
 			    String sqlQuery = "INSERT INTO ApplicationDetails " +
 						 //   "(Application id, Application Name) " +
@@ -307,7 +350,7 @@ public class ManageDAO {
 			
 				int maxSubAppId= getMaximumValue("SubApplicationDetails", "SubAppID");
 				maxSubAppId ++;
-				System.out.println("maxSubAppId : " + maxSubAppId);
+				log.debug("maxSubAppId : " + maxSubAppId);
 				  
 				  String sqlQuery = "INSERT INTO SubApplicationDetails " +
 						 // 	"(sub_app_id, sub_application name, app_id, user_id) " +
@@ -394,8 +437,7 @@ public class ManageDAO {
 			}
 
 		} catch (SQLException e) {
-			System.out
-					.println("Error while getting all application names from database");
+			log.debug("Error while getting all application names from database");
 			e.printStackTrace();
 		}finally {
 			try {
@@ -436,7 +478,7 @@ public class ManageDAO {
 			}
 
 		} catch (SQLException e) {
-			System.out.println("Error while getting sub application details");
+			log.debug("Error while getting sub application details");
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally {
@@ -477,7 +519,7 @@ public class ManageDAO {
 			}
 
 		} catch (SQLException e) {
-			System.out.println("Error while getting logpath details");
+			log.debug("Error while getting logpath details");
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally {
@@ -535,7 +577,7 @@ public class ManageDAO {
 				Map<String, String> SubAppNamesMap = new HashMap<String, String>();
 				SubAppNamesMap = getSubAppNames(Integer.toString(app_id));
 				data.setSubapplist(SubAppNamesMap);
-				System.out.println("getting logpath details for serverid " + serverId);
+				log.debug("getting logpath details for serverid " + serverId);
 				List<String> LogPathNamesList =  new ArrayList<String>();
 				LogPathNamesList = getLogPathNames(serverId);
 				data.setLogpathlist(LogPathNamesList);
@@ -550,7 +592,7 @@ public class ManageDAO {
 				servers.add(data);
 			}
 		} catch (Exception e) {
-			System.out.println("Error while getting all server details" + e.getMessage());
+			log.debug("Error while getting all server details" + e.getMessage());
 			e.printStackTrace();
 		}finally {
 			try {
@@ -588,9 +630,9 @@ public class ManageDAO {
 			insertStmt.setString(8, userPwd);
 			insertStmt.setString(9, fileName);
 			
-			System.out.println(id);
-			System.out.println(servername+ " " +ipaddress + " "+environment);
-			System.out.println(app_id + " " +sub_app_id);
+			log.debug(id);
+			log.debug(servername+ " " +ipaddress + " "+environment);
+			log.debug(app_id + " " +sub_app_id);
 			int rowCount = insertStmt.executeUpdate();
 			if (rowCount > 0)
 				recordID= id;
@@ -620,9 +662,9 @@ public class ManageDAO {
 				delStmt = SingletonDB.getInstance().getConnection()
 						.createStatement();
 				  recordcount = delStmt.executeUpdate(removesql);
-				 System.out.println(" recordcount " + recordcount);
+				  log.debug(" recordcount " + recordcount);
 			} catch (SQLException e) {
-				System.out.println("Error while deleting logpath details");
+				log.debug("Error while deleting logpath details");
 				e.printStackTrace();
 			} finally {
 				try {
@@ -651,7 +693,7 @@ public class ManageDAO {
 				id++;
 				insertStmt.setInt(1, id);
 				insertStmt.setInt(2, serverID);
-				System.out.println(" logPaths.get(k) " + logPaths.get(k));
+				log.debug(" logPaths.get(k) " + logPaths.get(k));
 				insertStmt.setString(3, logPaths.get(k));
 				insertStmt.addBatch();
 			}
@@ -731,7 +773,7 @@ public class ManageDAO {
 				delStmt.executeUpdate(removesql);
 
 			} catch (SQLException e) {
-				System.out.println("Error while deleting server details");
+				log.debug("Error while deleting server details");
 				e.printStackTrace();
 			} finally {
 				try {
@@ -751,7 +793,7 @@ public class ManageDAO {
 
 			if (null != SingletonDB.getInstance().getConnection())
 				SingletonDB.getInstance().getConnection().close();		
-				System.out.println("Connection closed");			 
+				log.debug("Connection closed");			 
 				} catch (SQLException ex) {
 					 ex.printStackTrace();
 			    } 		
@@ -765,13 +807,13 @@ public class ManageDAO {
 
 			if (null != SingletonDB.getInstance().getConnection())			
 			    SingletonDB.getInstance().getConnection().commit();
-				System.out.println("Transactions commited.");
+				log.debug("Transactions commited.");
 			 
 				} catch (SQLException ex) {
 					 ex.printStackTrace();
 			    }finally {
 					try {
-						    System.out.println("Closing connection.");
+						log.debug("Closing connection.");
 						if (null != SingletonDB.getInstance().getConnection())
 							SingletonDB.getInstance().getConnection().close();
 					} catch (Exception ex) {
@@ -787,7 +829,7 @@ public class ManageDAO {
 
 			if (null != SingletonDB.getInstance().getConnection())			
 			SingletonDB.getInstance().getConnection().rollback();
-			System.out.println("Transactions rolled back!");
+			log.debug("Transactions rolled back!");
 			
 				} catch (SQLException ex) {
 					 ex.printStackTrace();
@@ -809,7 +851,7 @@ public class ManageDAO {
 			{
 				
 				result = rs.getInt(1);
-				System.out.println("max value " + result);
+				log.debug("max value " + result);
 			}
 			
 		} catch (SQLException e) {
@@ -842,13 +884,13 @@ public class ManageDAO {
 					ApplicationBean appBean = new ApplicationBean();
 					int appid = appDetails.getInt("ApplicationID");
 					String appName = appDetails.getString("ApplicationName");
-					System.out.println("appid : "+appid +" appName: "+appName);
+					log.debug("appid : "+appid +" appName: "+appName);
 					appBean.setApplicationid(appid);
 					appBean.setApplicationname(appName);													
 					apps.add(appBean);
 				}
 			} catch (Exception e) {
-				System.out.println("Error while getting all user details");
+				log.debug("Error while getting all user details");
 				e.printStackTrace();
 			}finally {
 				try {
@@ -883,9 +925,9 @@ public class ManageDAO {
 				}  
 			}
 
-			      System.out.println("app_removesql : "+app_removesql);
-			      	System.out.println("subApp_removesql : "+subApp_removesql);
-			      		System.out.println("userApp_removesql : "+userApp_removesql);
+			log.debug("app_removesql : "+app_removesql);
+			log.debug("subApp_removesql : "+subApp_removesql);
+			log.debug("userApp_removesql : "+userApp_removesql);
 			try {
 				delStmt = SingletonDB.getInstance().getConnection()
 						.createStatement();
@@ -919,7 +961,7 @@ public class ManageDAO {
 						
 
 			} catch (SQLException e) {
-				System.out.println("Error while deleting application details");
+				log.debug("Error while deleting application details");
 				e.printStackTrace();
 			} finally {
 				try {
@@ -948,13 +990,13 @@ public class ManageDAO {
 					SubApplicationBean sappBean = new SubApplicationBean();
 					int sappid = appDetails.getInt("SubAppID");
 					String sappName = appDetails.getString("SubApplictionName");
-					System.out.println("sub_app_ID : "+sappid +" sub_appliction: "+sappName);
+					log.debug("sub_app_ID : "+sappid +" sub_appliction: "+sappName);
 					sappBean.setSubapplicationid(sappid);
 					sappBean.setSubapplicationname(sappName);													
 					sapps.add(sappBean);
 				}
 			} catch (Exception e) {
-				System.out.println("Error while getting all user details");
+				log.debug("Error while getting all user details");
 				e.printStackTrace();
 			}finally {
 				try {
@@ -984,13 +1026,13 @@ public class ManageDAO {
 				}  
 			}
 
-						System.out.println("subApp_removesql : "+subApp_removesql);
+			log.debug("subApp_removesql : "+subApp_removesql);
 			try {
 				delStmt = SingletonDB.getInstance().getConnection()
 						.createStatement();
 					delStmt.executeUpdate(subApp_removesql);
 			} catch (SQLException e) {
-				System.out.println("Error while deleting application details");
+				log.debug("Error while deleting application details");
 				e.printStackTrace();
 			} finally {
 				try {
@@ -1019,7 +1061,7 @@ public class ManageDAO {
 				 int id = rs.getInt("GroupID");
 				 String groupName=rs.getString("GroupName");
 				 groupNamesMap.put(String.valueOf(id), groupName);
-				 System.out.println("ID  : "+id);				
+				 log.debug("ID  : "+id);				
 			 }
 		
 			} catch (SQLException ex) {

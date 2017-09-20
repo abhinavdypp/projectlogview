@@ -113,7 +113,14 @@ function AddApplications()
                 }, function(response) {
 				  document.getElementById("frameload").src = "ApplicationDetails.jsp";
       });
-}       
+}
+function AddSubApplications()
+{
+          $.get("<%=request.getContextPath()%>/ApplicationsDetailsController?action=addSubAppDetails", {
+                }, function(response) {
+				  document.getElementById("frameload").src = "SubApplicationDetails.jsp";
+      });
+}      
 function DeleteApplications()
 {
           $.get("<%=request.getContextPath()%>/ApplicationsDetailsController?action=deleteAppDetails", {
@@ -188,11 +195,12 @@ for(Cookie cookie : cookies){
     <button class="dropbtn">Applications</button>
     <div class="dropdown-content">
       <a href="#" onclick="AddApplications()">Add Applications</a>
+      <a href="#" onclick="AddSubApplications()">Add Sub Applications</a>      
       <a href="#" onclick="DeleteApplications()">Delete Applications</a>
       <a href="#" onclick="DeleteSubApplications()">Delete Sub Applications</a>
     </div>
   </div> 
-	<a class="active" href="<%=request.getContextPath()%>/LogSearchCriteriaController" name="logViewer" id="logViewer"><b>LogViewer</b></a>
+<%-- 	<a class="active" href="<%=request.getContextPath()%>/LogSearchCriteriaController" name="logViewer" id="logViewer"><b>LogViewer</b></a> --%>
   	  <a href="#"><b>About</b></a>
     
 </div>

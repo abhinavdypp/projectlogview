@@ -217,7 +217,7 @@ $('#appNameList').change(function(event) {
 				Server password:
 				</td>
 				<td align="right">
-				<input type="password" name="serverpass">
+				<input type="password" name="serverpass" style="width: 100%">
 				</td>
 				</tr>
 				<tr>

@@ -12,6 +12,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
+
 import com.ibm.asset.logview.core.db.ManageDAO;
 import com.ibm.asset.logview.core.db.SingletonDB;
 
@@ -19,9 +21,9 @@ import com.ibm.asset.logview.core.db.SingletonDB;
 
 
 public class UserLoginController extends HttpServlet {
-	
+	static Logger log = Logger.getLogger(UserLoginController.class);
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)throws IOException, ServletException {
-		System.out.println("calling get");
+		log.debug("calling get");
 	}
 
 	
@@ -61,12 +63,12 @@ public class UserLoginController extends HttpServlet {
 							Cookie loginCookie = new Cookie("user",uname);
 						response.addCookie(loginCookie);
 						response.sendRedirect("AdminHome.jsp");
-						System.out.println("password matached");
+						log.debug("password matached");
 						
 						//Last Login code
 						ManageDAO dao = new ManageDAO();
 						if(dao.LastLogin(uname)==true){
-				    		System.out.println("Last login updated");
+							log.debug("Last login updated");
 				    		
 						}
 						}
@@ -78,7 +80,7 @@ public class UserLoginController extends HttpServlet {
 							//Last Login code
 							ManageDAO dao = new ManageDAO();
 							if(dao.LastLogin(uname)==true){
-					    		System.out.println("Last login updated");
+								log.debug("Last login updated");
 						}
 						}
 						}

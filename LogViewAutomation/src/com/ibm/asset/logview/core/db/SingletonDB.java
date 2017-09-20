@@ -2,8 +2,12 @@ package com.ibm.asset.logview.core.db;
 
 import java.sql.*;
 
-public class SingletonDB {
+import org.apache.log4j.Logger;
 
+import com.ibm.asset.logview.web.actions.UserController;
+
+public class SingletonDB {
+	static Logger log = Logger.getLogger(SingletonDB.class);
     private static SingletonDB dbIsntance;
  //   private static Connection con ;
 	String url="jdbc:odbc:mydsn";
@@ -29,7 +33,7 @@ public class SingletonDB {
     	
     	Connection con=null;
     	try{
-    		System.out.println("getting connection..");
+    		log.debug("getting connection..");
      	    con =DriverManager.getConnection(url);
     	}catch(SQLException se){
     		se.printStackTrace();

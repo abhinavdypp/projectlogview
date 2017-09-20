@@ -12,8 +12,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.servlet.annotation.WebServlet;
-import javax.xml.bind.ParseConversionEvent;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -21,19 +19,22 @@ import com.ibm.asset.logview.core.data.ServerData;
 import com.ibm.asset.logview.core.db.ManageDAO;
 import com.ibm.asset.logview.core.db.UserDAO;
 
+import org.apache.log4j.Logger;
+
 import net.sf.json.JSONObject;
 
 
-@WebServlet("/UserController")
+
 public class UserController extends HttpServlet {
 	private static final long serialVersionUID=1L;
-	
+	static Logger log = Logger.getLogger(UserController.class);
 	public  UserController(){
 		
 	}
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws IOException, ServletException {
-		System.out.println("calling doget" + request.getParameter("action"));
+		
+		log.info("doget method called for" + request.getParameter("action"));
 		
 		UserDAO uDAO = new UserDAO();
 		ManageDAO manageDAO = new ManageDAO();	
@@ -41,10 +42,10 @@ public class UserController extends HttpServlet {
 		String action = request.getParameter("action");
 		
 		 
-		if (action.equalsIgnoreCase("getlogdetails")) {
+		if (action!= null && action.equalsIgnoreCase("getlogdetails")) {
 			HttpSession session=request.getSession(true);
 			String uname=session.getAttribute("username").toString();
-			System.out.println(uname);
+			log.debug(uname);
 			Map<String, String> appNamesMap = new HashMap<String, String>();
 			appNamesMap = uDAO.getUserApplications(uname);
 			
@@ -55,63 +56,56 @@ public class UserController extends HttpServlet {
 			
 		}
 			
-		else if(action.equalsIgnoreCase("getSubApps")) 
+		else if(action!= null && action.equalsIgnoreCase("getSubApps")) 
 		{
 			if (null != request.getParameter("appName").toString()) {
-				System.out.println("getting sub app details");
+				log.debug("getting sub app details");
 				
 				HttpSession session=request.getSession(true);
 			    String uname=session.getAttribute("username").toString();
-				System.out.println(uname);
+				
 				
 				JSONObject responseDetailsJson = new JSONObject();
 				
 				String appId=request.getParameter("appName").toString();
-				System.out.println(appId);
+				log.debug("Get subapp for appid " + appId);
 						
 				responseDetailsJson.accumulateAll(uDAO.getUsersubApplications(uname,appId));
 				response.setContentType("application/json");
 				response.getWriter().write(responseDetailsJson.toString());
 			}
 		}
-		else if(action.equalsIgnoreCase("getappEnvironment")){ 
+		else if(action!= null && action.equalsIgnoreCase("getappEnvironment")){ 
 			
 		
 			if (null == request.getParameter("subAppname")){
-				System.out.println("getting environment");
-				
 				
 				String appId=request.getParameter("appName").toString();
-				System.out.println("*** spp Id " + appId);
 				Gson gson = new Gson();
 				ArrayList<String> envt=new ArrayList<String>();
 				envt=uDAO.getappEnvirnment(appId);
-				JsonElement jsonElement = gson.toJsonTree(envt);
-				System.out.println(jsonElement.isJsonArray());
 				String json = gson.toJson(envt);
-				System.out.println(json);
-								
 				response.setContentType("application/json");
 				response.getWriter().write(json.toString());
 				
 			}
 		}
 		
-		else if(action.equalsIgnoreCase("getsubappEnvironment")){ 
+		else if(action!= null && action.equalsIgnoreCase("getsubappEnvironment")){ 
 			
 		
 			if (null != request.getParameter("subAppname")){
-				System.out.println("subapp is not null");
+				log.debug("subapp is not null");
 				
 				String subappId=request.getParameter("subAppname").toString();
-				System.out.println("subapplid" + subappId);
+				log.debug("subapplid" + subappId);
 			Gson gson = new Gson();
 			ArrayList<String> envt=new ArrayList<String>();
 			envt=uDAO.getsubappEnvirnment(subappId);
 			JsonElement jsonElement = gson.toJsonTree(envt);
-			System.out.println(jsonElement.isJsonArray());
+			log.debug(jsonElement.isJsonArray());
 			String json = gson.toJson(envt);
-			System.out.println(json);
+			log.debug(json);
 					
 	
 			response.setContentType("application/json");
@@ -121,23 +115,23 @@ public class UserController extends HttpServlet {
 			}
 		}
 		
-		else if(action.equalsIgnoreCase("getServerNames")){ 
+		else if(action!= null && action.equalsIgnoreCase("getServerNames")){ 
 			
 			String subappId = request.getParameter("subAppname");
 			String appId = request.getParameter("appName");
 			String environment = request.getParameter("Environment");
 			
-			System.out.println( "subappId :: " + subappId + " appId :: " + appId + " environment :: " + environment);
+			log.debug("subappId :: " + subappId + " appId :: " + appId + " environment :: " + environment);
 			
 			if (null != subappId && null!= appId && null!= environment){
-				System.out.println("subapp is not null");
+				log.debug("subapp is not null");
 				Gson gson = new Gson();
 				Map<String,String> serverNameList=new HashMap<String, String>();
 					serverNameList=uDAO.getServerNames(Integer.parseInt(appId), Integer.parseInt(subappId), environment);
 			JsonElement jsonElement = gson.toJsonTree(serverNameList);
-			System.out.println(jsonElement.isJsonArray());
+			log.debug(jsonElement.isJsonArray());
 			String json = gson.toJson(serverNameList);
-			System.out.println(json);
+			log.debug(json);
 					
 	
 			response.setContentType("application/json");
@@ -147,22 +141,22 @@ public class UserController extends HttpServlet {
 			}
 		}
 		
-		else if(action.equalsIgnoreCase("getLogPaths")){ 
+		else if(action!= null && action.equalsIgnoreCase("getLogPaths")){ 
 			
 			String serverId = request.getParameter("serverId");
 			
 			
-			System.out.println( "serverId :: " + serverId );
+			log.debug( "serverId :: " + serverId );
 			
 			if (null != serverId ){
-				System.out.println("subapp is not null");
+				log.debug("subapp is not null");
 				Gson gson = new Gson();
 				ArrayList<String> logPathList=new ArrayList<String>();
 				logPathList=uDAO.getLogPaths(Integer.parseInt(serverId));
 			JsonElement jsonElement = gson.toJsonTree(logPathList);
-			System.out.println(jsonElement.isJsonArray());
+			log.debug(jsonElement.isJsonArray());
 			String json = gson.toJson(logPathList);
-			System.out.println(json);
+			log.debug(json);
 					
 	
 			response.setContentType("application/json");
@@ -173,7 +167,7 @@ public class UserController extends HttpServlet {
 		}
 		
 		else if(action != null && action.equalsIgnoreCase("grantAccess"))
-		{	System.out.println("Enter grant access");
+		{	log.debug("Enter grant access");
 			HttpSession session = request.getSession(true);
 			
 			Map<String, String> userNameMap = manageDAO.getUserDetails();
@@ -198,7 +192,6 @@ public class UserController extends HttpServlet {
 			ManageDAO mDao = new ManageDAO();
 			String action = request.getParameter("action");
 				if (action!=null && action.equals("Search")) {
-					System.out.println("In user controller");
 			
 			
 					//HttpSession session=request.getSession(true);			
@@ -209,9 +202,7 @@ public class UserController extends HttpServlet {
 					String serverName = request.getParameter("serverNameList");
 					String logpath = request.getParameter("logPathList");
 					
-					System.out.println(environment);
-					System.out.println(app_id );
-					System.out.println(sub_app_id + " env : " +  envName + " server name "+ serverName + " logpath "  +logpath);
+					log.debug("EnvName: " + environment + "appId: " + app_id + "subappid: " +sub_app_id + " env : " +  envName + " server name "+ serverName + " logpath "  +logpath);
 					
 			        	
 					//ArrayList<String> logs=new ArrayList<String>();
