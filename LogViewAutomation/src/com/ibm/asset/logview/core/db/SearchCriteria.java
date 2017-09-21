@@ -5,6 +5,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import org.apache.log4j.Logger;
+
+import com.ibm.asset.logview.web.actions.UserController;
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSch;
@@ -20,7 +23,7 @@ import com.jcraft.jsch.UserInfo;
  */
 public class SearchCriteria {
 
-	
+	static Logger log = Logger.getLogger(SearchCriteria.class);
 		private static String serverPassword; 
     
 public String getLogDetail(String host, String user, int port, String command, String password) {
@@ -30,7 +33,7 @@ public String getLogDetail(String host, String user, int port, String command, S
         serverPassword =password;
  		try{
 	    	
-	        System.out.println("user : "+ user + " host : "+host + " port : "+port + " command : "+command);
+ 			log.debug("user : "+ user + " host : "+host + " port : "+port + " command : "+command);
 	        
 	        Session session=jsch.getSession(user, host, port);	       
 	        // username and password will be given via UserInfo interface.
@@ -46,11 +49,11 @@ public String getLogDetail(String host, String user, int port, String command, S
 	   
 	        
 	        while(true){
-	        	System.out.println("inside first while");
-	        	outputLog = readResponse(in);
+	        	log.debug("inside first while");
+				outputLog = readResponse(in);
 	          if(channel.isClosed()){
-	        	System.out.println("Inside close channel");
-	            System.out.println("exit-status: "+channel.getExitStatus());
+	        	  log.debug("Inside close channel");
+	        	  log.debug("exit-status: "+channel.getExitStatus());
 	            break;
 	            	            
 	          }
@@ -60,12 +63,13 @@ public String getLogDetail(String host, String user, int port, String command, S
 	        session.disconnect();
 	      }
 	      catch(Exception e){
-	        System.out.println(e);
+	    	  log.debug(e);
 	      }
 
 		return outputLog;
 	}
-private String readResponse(InputStream is){
+	
+	private String readResponse(InputStream is){
 	BufferedReader br = null;
 	StringBuilder sb = new StringBuilder();
 
@@ -92,7 +96,6 @@ private String readResponse(InputStream is){
     System.out.println("outputLog :"+sb.toString());
     return sb.toString();
 }
-	
 	public static String getServerPassword() {
 		String password = serverPassword;		
 		return password;
@@ -101,24 +104,24 @@ private String readResponse(InputStream is){
 
  public static class MyUserInfo implements UserInfo{
 
-	 		public String getPassword(){ System.out.println("inside getPassword");return passwd; }
+	 		public String getPassword(){ log.debug("inside getPassword");return passwd; }
 		 
 		    public boolean promptYesNo(String str){
-		    	System.out.println("inside promptYesNo");
+		    	log.debug("inside promptYesNo");
 		        str = "Yes";
 		        return true;}
 		   
 		    String passwd;
 		 
-		    public String getPassphrase(){     	System.out.println("inside getPassphrase"); return null; }
-		    public boolean promptPassphrase(String message){ System.out.println("inside promptPassphrase"); return true; }
+		    public String getPassphrase(){     	log.debug("inside getPassphrase"); return null; }
+		    public boolean promptPassphrase(String message){log.debug("inside promptPassphrase"); return true; }
 		    public boolean promptPassword(String message){
-		    	System.out.println("inside promptPassword");
+		    	log.debug("inside promptPassword");
 		        passwd=getServerPassword(); // enter the password for the machine you want to connect.
 		        return true;
 		    }
 		    public void showMessage(String message){
-		    	System.out.println("inside showMessage");    
+		    	log.debug("inside showMessage");    
 		    }
 		  
 		    }
