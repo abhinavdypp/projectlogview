@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Home</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" type="text/css" href="CommonLayout.css">
+<link rel="stylesheet" href="/w3css/3/w3.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+<script type="text/javascript"> 
+            
+	$(document).ready(function(){
+	$("#bodyContent").load("Home.html");
+	
+		$("#contact").click(function(){
+			$("#bodyContent").load("ContactUs.html");
+		});
+		$("#home").click(function(){
+			$("#bodyContent").load("Home.html");
+		});
+		$("#productService").click(function(){
+			$("#bodyContent").load("ProductService.html");
+		});
+		$("#marketSpecific").click(function(){
+			$("#bodyContent").load("MarketSpecificSolution.html");
+		});
+		$("#career").click(function(){
+			$("#bodyContent").load("Career.html");
+		});
+		$("#about").click(function(){
+			$("#bodyContent").load("About.html");
+		});
+	});
+        </script>
+</head>
+ 
+<body>
+<div class="contactHome">
+	<a id="contact" href="#">Contact</a>
+	<a href="#">Language | English</a>
+</div>
+<div class="header">
+  <h1>Heaty</h1>
+  <!-- Slide Show -->
+  
+  <section>
+  <img class="mySlides" src="1.jpg">
+  <img class="mySlides" src="2.jpg">
+  <img class="mySlides" src="3.jpg">
+</section>
+</div>
+
+<div class="navbar">
+  <a id ="home" href="#">Home</a>
+  <a id ="productService" href="#">Product & Services</a>
+  <a id ="marketSpecific" href="#">Market-specific Solutions</a>
+  <a id ="career" href="#">Career</a>
+  <a id ="about" href="#" class="right">About</a>
+</div>
+
+<div id="bodyContent" class="row">
+  
+
+<div class="footer">
+  <h2>Follow us</h2>
+   <a href="#"><i class="fa fa-facebook-official"></i></a>
+  <a href="#"><i class="fa fa-pinterest-p"></i></a>
+  <a href="#"><i class="fa fa-twitter"></i></a>
+  <a href="#"><i class="fa fa-flickr"></i></a>
+  <a href="#"><i class="fa fa-linkedin"></i></a>
+  <p class="w3-medium">
+  Powered by <a href="http://www.google.com" target="_blank">Abhinav</a>
+  </p>
+</div>
+<script>
+// Automatic Slideshow - change image every 3 seconds
+var myIndex = 0;
+carousel();
+
+function carousel() {
+    var i;
+    var x = document.getElementsByClassName("mySlides");
+    for (i = 0; i < x.length; i++) {
+       x[i].style.display = "none";
+    }
+    myIndex++;
+    if (myIndex > x.length) {myIndex = 1}
+    x[myIndex-1].style.display = "block";
+    setTimeout(carousel, 5000);
+}
+</script>
+</body>
+</html>
